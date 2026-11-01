@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>راهنمای جامع کاربر — استقراربان (MahDeploy)</title>
+<style>
+
+/* ================= page & base ================= */
+@page { size: 794px 1123px; margin: 0; }
+:root{
+  --c-bg:#0E0C1D;
+  --c-card:rgba(167,139,250,0.055);
+  --c-card2:rgba(167,139,250,0.10);
+  --c-header:rgba(167,139,250,0.14);
+  --c-border:rgba(167,139,250,0.20);
+  --c-border-soft:rgba(167,139,250,0.12);
+  --c-accent:#A78BFA;
+  --c-accent-soft:#C4B5FD;
+  --c-accent2:#7DD3FC;
+  --c-text:#EDEAFA;
+  --c-muted:#A6A0CB;
+  --c-faint:#7B75A3;
+  --c-ok:#6EE7B7;
+  --c-warn:#FCD34D;
+  --c-fail:#FB7185;
+}
+html,body{
+  margin:0;padding:0;width:794px;
+  background:var(--c-bg);
+  color:var(--c-text);
+  font-family:'Vazirmatn','Tahoma',sans-serif;
+  font-size:14.5px;line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+}
+@media screen{
+  html{height:auto;display:flex;justify-content:center;background:#06050F;}
+  body{transform-origin:top center;margin:16px auto;box-shadow:0 0 60px rgba(0,0,0,.5);}
+}
+*{box-sizing:border-box;}
+p{margin:0;}
+.mono{font-family:'JetBrains Mono','Courier New',monospace;}
+
+/* ================= cover ================= */
+.cover{
+  width:794px;height:1123px;position:relative;
+  break-after:page;overflow:hidden;
+}
+.cover .bg{position:absolute;inset:0;overflow:hidden;z-index:1;}
+.cover .glow1{position:absolute;top:40px;right:60px;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0) 68%);}
+.cover .glow2{position:absolute;bottom:60px;left:80px;width:380px;height:380px;border-radius:50%;
+  background:radial-gradient(circle,rgba(45,212,191,0.12) 0%,rgba(45,212,191,0) 70%);}
+.cover .gridlines{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(167,139,250,0.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(167,139,250,0.045) 1px,transparent 1px);
+  background-size:56px 56px;}
+.cover .content{position:absolute;inset:0;z-index:3;}
+.cover .kicker{
+  position:absolute;top:150px;right:88px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:5px;
+  color:var(--c-accent-soft);opacity:.75;direction:ltr;text-align:left;
+}
+.cover .brand{
+  position:absolute;top:212px;right:88px;left:88px;
+}
+.cover .brand .fa-name{font-size:96px;font-weight:900;line-height:1.12;}
+.cover .brand .fa-name em{font-style:normal;color:var(--c-accent);}
+.cover .brand .latin{
+  font-family:'JetBrains Mono',monospace;direction:ltr;text-align:right;
+  font-size:20px;color:var(--c-accent2);opacity:.85;margin-top:10px;letter-spacing:2px;
+}
+.cover .doc-type{
+  position:absolute;top:562px;right:88px;
+  display:inline-block;font-size:26px;font-weight:700;color:var(--c-text);
+  border-right:4px solid var(--c-accent);padding-right:16px;
+}
+.cover .summary{
+  position:absolute;top:642px;right:88px;width:520px;
+  font-size:15.5px;line-height:2.05;color:var(--c-muted);
+}
+.cover .meta{
+  position:absolute;top:826px;right:88px;left:88px;
+  display:flex;flex-wrap:wrap;gap:12px;max-width:100%;
+}
+.cover .meta .pill{
+  flex:0 1 auto;min-width:80px;max-width:100%;
+  border:1px solid var(--c-border);border-radius:12px;
+  background:var(--c-card);padding:9px 16px;
+  font-size:12.5px;color:var(--c-accent-soft);
+}
+.cover .meta .pill b{color:var(--c-text);font-weight:700;}
+.cover .rule{position:absolute;right:88px;left:88px;bottom:138px;height:1px;
+  background:linear-gradient(270deg,var(--c-accent),rgba(167,139,250,0));}
+.cover .footer{
+  position:absolute;bottom:58px;right:88px;left:88px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--c-faint);
+}
+.cover .footer .mono{direction:ltr;unicode-bidi:embed;}
+
+/* ================= toc page ================= */
+.toc{
+  width:794px;height:1123px;position:relative;
+  break-after:page;overflow:hidden;
+  padding:96px 88px 0 88px;
+}
+.toc .head-tag{font-family:'JetBrains Mono',monospace;direction:ltr;text-align:right;
+  font-size:11px;letter-spacing:4px;color:var(--c-accent);opacity:.8;}
+.toc h2{font-size:40px;font-weight:900;margin:10px 0 6px 0;}
+.toc .sub{color:var(--c-muted);font-size:13.5px;margin-bottom:34px;}
+.toc .row{
+  display:flex;align-items:center;gap:14px;
+  border:1px solid var(--c-border-soft);border-radius:14px;
+  background:var(--c-card);padding:14px 18px;margin-bottom:11px;
+}
+.toc .row .num{
+  width:38px;height:38px;border-radius:11px;flex-shrink:0;
+  background:var(--c-header);border:1px solid var(--c-border);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:16px;color:var(--c-accent-soft);
+}
+.toc .row .t{flex:1 1 auto;min-width:0;}
+.toc .row .t .tt{font-weight:700;font-size:15px;}
+.toc .row .t .ts{font-size:11.5px;color:var(--c-faint);margin-top:1px;}
+.toc .row .pg{
+  font-family:'JetBrains Mono',monospace;direction:ltr;flex-shrink:0;
+  font-size:13px;color:var(--c-accent2);border-left:1px dashed var(--c-border);
+  padding-left:12px;
+}
+.toc .note{margin-top:22px;font-size:11.5px;color:var(--c-faint);line-height:2;
+  border-right:3px solid var(--c-border);padding-right:12px;}
+
+/* ================= flowing content ================= */
+.main-content{padding:56px 72px 40px 72px;}
+.chapter-header{break-after:avoid;break-inside:avoid;margin-top:20px;margin-bottom:14px;}
+.chapter-header:first-child{margin-top:0;}
+.chapter-header .ch-tag{
+  display:inline-block;font-family:'JetBrains Mono',monospace;direction:ltr;
+  font-size:10.5px;letter-spacing:3px;color:var(--c-accent);opacity:.85;
+  border:1px solid var(--c-border);border-radius:8px;padding:3px 10px;background:var(--c-card);
+}
+.chapter-header h2{font-size:26px;font-weight:900;margin:10px 0 4px 0;line-height:1.45;}
+.chapter-header .lead{color:var(--c-muted);font-size:13px;max-width:640px;}
+.chapter-header::after{content:'';display:block;height:2px;width:64px;background:linear-gradient(270deg,var(--c-accent),rgba(167,139,250,0.15));border-radius:2px;margin-top:14px;}
+
+.body-text{text-align:justify;color:var(--c-text);font-size:14px;line-height:1.98;margin-bottom:10px;overflow-wrap:break-word;}
+.body-text b{color:var(--c-accent-soft);}
+.body-text .mono, .inline-code{
+  font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed;
+  background:rgba(125,211,252,0.08);border:1px solid rgba(125,211,252,0.18);
+  color:var(--c-accent2);border-radius:6px;padding:1px 7px;font-size:12px;white-space:nowrap;
+}
+
+.card{break-inside:avoid;border:1px solid var(--c-border-soft);border-radius:14px;
+  background:var(--c-card);padding:14px 16px;margin-bottom:10px;}
+.card h4{font-size:14.5px;font-weight:800;margin:0 0 6px 0;display:flex;align-items:center;gap:8px;}
+.card h4 .dot{width:8px;height:8px;border-radius:3px;background:var(--c-accent);flex-shrink:0;}
+.card p{font-size:12.5px;line-height:2;color:var(--c-muted);text-align:justify;}
+
+.grid2{display:flex;flex-wrap:wrap;gap:10px;max-width:100%;margin-bottom:10px;}
+.grid2 .card{flex:1 1 320px;min-width:280px;max-width:100%;margin-bottom:0;}
+
+/* step rows */
+.step-row{break-inside:avoid;display:flex;gap:14px;align-items:flex-start;
+  border:1px solid var(--c-border-soft);border-radius:14px;background:var(--c-card);
+  padding:12px 15px;margin-bottom:8px;max-width:100%;}
+.step-row .n{
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;margin-top:2px;
+  background:linear-gradient(135deg,rgba(139,92,246,0.5),rgba(217,70,239,0.4));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:15px;color:#fff;
+}
+.step-row .t{min-width:0;flex:1;}
+.step-row .t .tt{font-weight:800;font-size:14px;}
+.step-row .t .tx{font-size:12.5px;color:var(--c-muted);line-height:2;text-align:justify;margin-top:3px;}
+
+/* callouts */
+.callout{break-inside:avoid;border-radius:14px;padding:11px 15px;margin-bottom:9px;font-size:12.5px;line-height:1.95;}
+.callout.tip{border:1px solid rgba(252,211,77,0.22);background:rgba(252,211,77,0.05);color:#FDE9AE;}
+.callout.warn{border:1px solid rgba(251,113,133,0.25);background:rgba(251,113,133,0.06);color:#FECDD3;}
+.callout.ok{border:1px solid rgba(110,231,183,0.22);background:rgba(110,231,183,0.05);color:#B9F3DC;}
+.callout b{font-weight:800;}
+
+/* status legend */
+.legend{display:flex;flex-wrap:wrap;gap:10px;max-width:100%;margin-bottom:12px;}
+.legend .item{flex:1 1 200px;min-width:170px;max-width:100%;border-radius:12px;padding:11px 14px;font-size:12px;line-height:1.9;border:1px solid;}
+.legend .ok{border-color:rgba(110,231,183,0.25);background:rgba(110,231,183,0.055);}
+.legend .warn{border-color:rgba(252,211,77,0.25);background:rgba(252,211,77,0.055);}
+.legend .fail{border-color:rgba(251,113,133,0.28);background:rgba(251,113,133,0.06);}
+.legend .item b{display:block;font-size:13px;margin-bottom:2px;}
+.legend .ok b{color:var(--c-ok);} .legend .warn b{color:var(--c-warn);} .legend .fail b{color:var(--c-fail);}
+.legend .item span{color:var(--c-muted);}
+
+/* tables */
+table{width:100%;border-collapse:collapse;break-inside:avoid;margin-bottom:12px;font-size:12px;}
+table.splittable{break-inside:auto;}
+table.splittable tbody tr{break-inside:avoid;}
+thead{display:table-header-group;}
+th{
+  background:var(--c-header);color:var(--c-text);font-weight:800;
+  padding:10px 12px;text-align:right;border:1px solid var(--c-border-soft);font-size:12.5px;
+}
+td{padding:8px 11px;border:1px solid rgba(167,139,250,0.09);vertical-align:top;line-height:1.95;color:var(--c-muted);overflow-wrap:break-word;}
+tbody tr:nth-child(odd) td{background:rgba(167,139,250,0.028);}
+td .mono, .tdcode{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed;color:var(--c-accent2);font-size:11px;}
+tr{break-inside:avoid;}
+
+/* architecture flow */
+.flow{break-inside:avoid;border:1px solid var(--c-border-soft);border-radius:14px;background:rgba(10,8,26,0.55);padding:14px 16px;margin-bottom:10px;}
+.flow .fl-title{font-size:12px;color:var(--c-faint);margin-bottom:10px;font-weight:700;}
+.flow .lane{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;direction:ltr;}
+.flow .node{flex:1 1 120px;min-width:100px;max-width:100%;border:1px solid var(--c-border);border-radius:10px;background:var(--c-card2);padding:9px 10px;text-align:center;}
+.flow .node b{display:block;font-size:12px;color:var(--c-text);font-family:'JetBrains Mono',monospace;}
+.flow .node span{font-size:10px;color:var(--c-faint);}
+.flow .arr{color:var(--c-accent);flex:0 0 auto;font-size:14px;}
+
+/* code block */
+.codeblock{break-inside:avoid;border:1px solid var(--c-border-soft);border-radius:12px;
+  background:#0A0819;margin-bottom:10px;overflow:hidden;}
+.codeblock .cb-head{display:flex;justify-content:space-between;padding:8px 14px;
+  border-bottom:1px solid var(--c-border-soft);background:rgba(167,139,250,0.06);
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--c-faint);direction:ltr;}
+.codeblock pre{margin:0;padding:14px 16px;direction:ltr;text-align:left;
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.95;color:#C8E8F8;overflow-wrap:break-word;white-space:pre-wrap;}
+.codeblock pre .c{color:#8B84B5;} .codeblock pre .g{color:#7DE8BC;}
+
+/* ending page */
+.ending{width:794px;height:1123px;position:relative;break-before:page;overflow:hidden;}
+.ending .bg{position:absolute;inset:0;overflow:hidden;z-index:1;}
+.ending .glow1{position:absolute;top:180px;left:180px;width:430px;height:430px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,92,246,0.20) 0%,rgba(139,92,246,0) 70%);}
+.ending .glow2{position:absolute;bottom:120px;right:120px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(45,212,191,0.10) 0%,rgba(45,212,191,0) 70%);}
+.ending .content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 90px;}
+.ending .brand-sm{font-size:58px;font-weight:900;}
+.ending .brand-sm em{font-style:normal;color:var(--c-accent);}
+.ending .latin{font-family:'JetBrains Mono',monospace;direction:ltr;font-size:15px;color:var(--c-accent2);opacity:.8;letter-spacing:3px;margin-top:8px;}
+.ending .tagline{font-size:16px;color:var(--c-muted);line-height:2.2;margin-top:34px;max-width:520px;}
+.ending .recap{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:36px;max-width:100%;}
+.ending .recap .pill{border:1px solid var(--c-border);border-radius:999px;background:var(--c-card);
+  padding:8px 18px;font-size:12.5px;color:var(--c-accent-soft);}
+.ending .meta-line{margin-top:52px;font-size:12px;color:var(--c-faint);line-height:2.2;}
+.ending .meta-line .mono{direction:ltr;unicode-bidi:embed;font-size:11.5px;}
+.ending .rule{width:180px;height:2px;margin:50px auto 0 auto;border-radius:2px;
+  background:linear-gradient(90deg,rgba(167,139,250,0),var(--c-accent),rgba(167,139,250,0));}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ COVER ═══════════════════ -->
+<div class="cover">
+  <div class="bg">
+    <div class="gridlines"></div>
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+  </div>
+  <div class="content">
+    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.1.0</div>
+    <div class="brand">
+      <div class="fa-name">استقرار<em>بان</em></div>
+      <div class="latin">MahDeploy — FastAPI + React Deployer for Windows Server</div>
+    </div>
+    <div class="doc-type">راهنمای جامع کاربر</div>
+    <div class="summary">
+      استقرار استاندارد و خودکار اپلیکیشن‌های FastAPI + React روی ویندوز سرور؛ با پیش‌بررسی کامل
+      دامنه، پورت و گواهی SSL، اسکریپت‌های استاندارد PowerShell، وب‌سرور Nginx و سرویس ویندوز —
+      همه در یک پنل فارسی و شیشه‌ای. این راهنما گام‌به‌گام تمام بخش‌های سامانه را توضیح می‌دهد.
+    </div>
+    <div class="meta">
+      <span class="pill">نسخه سند: <b>۱.۱.۰</b></span>
+      <span class="pill">تاریخ انتشار: <b>آبان ۱۴۰۵</b></span>
+      <span class="pill">مخاطب: <b>مدیران سرور و تیم‌های فنی</b></span>
+      <span class="pill">سیستم‌عامل: <b>Windows Server 2016+</b></span>
+    </div>
+    <div class="rule"></div>
+    <div class="footer">
+      <span>سند رسمی محصول — همراه پکیج پرتابل</span>
+      <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TOC ═══════════════════ -->
+<div class="toc">
+  <div class="head-tag">TABLE OF CONTENTS</div>
+  <h2>فهرست مطالب</h2>
+  <p class="sub">هفت فصل، از آشنایی با سامانه تا عیب‌یابی — هر بخش با همان زبانی که در خود پنل می‌بینید.</p>
+
+  <div class="row"><span class="num">۱</span><span class="t"><span class="tt">آشنایی با استقراربان</span><br><span class="ts">چرا این سامانه؟ معماری، امکانات کلیدی و جریان کار</span></span><span class="pg" id="toc-ch1">۱</span></div>
+  <div class="row"><span class="num">۲</span><span class="t"><span class="tt">اجرا و راه‌اندازی</span><br><span class="ts">اجرای پکیج پرتابل، ثبت سرویس ویندوز و نخستین ورود</span></span><span class="pg" id="toc-ch2">۲</span></div>
+  <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۳</span></div>
+  <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۴</span></div>
+  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">شروع/توقف/ری‌استارت، جزئیات، اسکریپت‌ها و حذف کامل</span></span><span class="pg" id="toc-ch5">۵</span></div>
+  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۶</span></div>
+  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل</span></span><span class="pg" id="toc-ch7">۷</span></div>
+
+  <p class="note">
+    در خود پنل نیز هر صفحه دکمه «راهنما» دارد که توضیح همان بخش را همین‌جا و بدون خروج از پنل نمایش می‌دهد؛
+    این سند نسخه کامل و مصور همان راهنماست. برای مرور سریع، کافی است فصل ۲ را بخوانید و سپس مستقیم سراغ فصل ۴ بروید.
+  </p>
+</div>
+
+<!-- ═══════════════════ BODY ═══════════════════ -->
+<div class="main-content">
+  <!-- ═══════ فصل ۱ ═══════ -->
+  <div class="chapter-header" id="ch1">
+    <span class="ch-tag">CHAPTER 01</span>
+    <h2>آشنایی با استقراربان</h2>
+    <p class="lead">چرا استقرار دستی روی ویندوز سرور دردسر دارد و این سامانه چه چیزی را استاندارد می‌کند.</p>
+    <div class="divider"></div>
+  </div>
+
+  <p class="body-text">
+    استقرار دستی یک اپلیکیشن <b>FastAPI + React</b> روی ویندوز سرور یعنی ده‌ها کار ریز و حساس: ساخت ساختار پوشه، ساخت
+    محیط مجازی پایتون، نصب وابستگی‌ها، بیلد فرانت‌اند، تنظیم Nginx و SSL، باز کردن فایروال و ثبت سرویس ویندوز — که هر
+    کدام جای خودش را دارد و یک اشتباه کوچک، سامانه را از دسترس خارج می‌کند. <b>استقراربان (MahDeploy)</b> این فرآیند را
+    به یک ویزارد ۵ مرحله‌ای تبدیل می‌کند: شما مشخصات را وارد می‌کنید، سامانه همه‌چیز را پیش‌بررسی می‌کند و تا همه
+    بررسی‌ها سبز نشوند اجازه نصب نمی‌دهد؛ سپس با اسکریپت‌های استاندارد PowerShell عملیات را اجرا و گزارش زنده نشان می‌دهد.
+  </p>
+  <p class="body-text">
+    پنل کاملاً <b>پرتابل</b> است: نیازی به نصب پایتون، Node.js، PyCharm یا دیتابیس روی سیستمِ اجراکننده پنل نیست و
+    همه ران‌تایم‌ها داخل پکیج قرار دارند. رابط کاربری فارسی و راست‌به‌چپ است و هر صفحه، دکمه «راهنما»ی خودش را دارد.
+  </p>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>پیش‌بررسی پیش از نصب</h4><p>DNS دامنه، آزاد بودن پورت، اعتبار و تطابق گواهی SSL و وجود مسیر کد — همه به‌صورت زنده و قبل از هر تغییری روی سرور کنترل می‌شوند.</p></div>
+    <div class="card"><h4><span class="dot"></span>اسکریپت‌های استاندارد</h4><p>۶ اسکریپت PowerShell استاندارد برای هر استقرار تولید می‌شود؛ قابل مشاهده، کپی و دانلود — شفافیت کامل درباره «چه چیزی روی سرورم اجرا می‌شود».</p></div>
+    <div class="card"><h4><span class="dot"></span>Nginx و SSL خودکار</h4><p>کانفیگ HTTPS روی پورت ۴۴۳ با گواهی شما، پروکسی /api به بک‌اند و سرو فایل‌های React به‌صورت خودکار ساخته و ریلود می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>سرویس ویندوز با WinSW</h4><p>بک‌اند FastAPI به‌عنوان سرویس ویندوز ثبت می‌شود؛ با بوت سرور بالا می‌آید و در صورت کرش، خودکار دوباره اجرا می‌گردد.</p></div>
+    <div class="card"><h4><span class="dot"></span>پایش زنده سرور</h4><p>مصرف CPU، رم و دیسک، وضعیت Nginx و نقشه کامل پورت‌های اشغال‌شده، هر ۴ ثانیه به‌روزرسانی می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>مدیریت چرخه حیات</h4><p>شروع، توقف، ری‌استارت و حذف کامل هر سامانه مستقرشده — همراه با آرشیو لاگ‌ها و پاک‌سازی کانفیگ‌ها.</p></div>
+  </div>
+
+  <div class="flow">
+    <div class="fl-title">معماری ترافیک پس از استقرار</div>
+    <div class="lane">
+      <div class="node"><b>Client</b><span>مرورگر کاربر</span></div>
+      <div class="arr">→</div>
+      <div class="node"><b>Nginx :443</b><span>SSL + Reverse Proxy</span></div>
+      <div class="arr">→</div>
+      <div class="node"><b>/</b><span>React static (www)</span></div>
+    </div>
+    <div class="lane" style="margin-top:8px;">
+      <div class="node" style="flex:2 1 240px;"><b>Nginx → /api&nbsp;&nbsp;/docs</b><span>پروکسی به بک‌اند</span></div>
+      <div class="arr">→</div>
+      <div class="node"><b>uvicorn 127.0.0.1:PORT</b><span>FastAPI Service</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════ فصل ۲ ═══════ -->
+  <div class="chapter-header" id="ch2">
+    <span class="ch-tag">CHAPTER 02</span>
+    <h2>اجرا و راه‌اندازی</h2>
+    <p class="lead">از بازکردن ZIP تا نخستین ورود موفق — در کمتر از پنج دقیقه.</p>
+    <div class="divider"></div>
+  </div>
+
+  <p class="body-text">
+    پکیج پرتابل هیچ پیش‌نیازی ندارد؛ فقط به <b>ویندوز ۱۰/۱۱ یا ویندوز سرور ۲۰۱۶ به بالا (۶۴ بیتی)</b> نیاز دارید.
+    کل پوشه را در مسیری بدون فاصله و بدون حرف فارسی باز کنید — پیشنهاد ما <span class="inline-code">C:\MahDeploy</span> است.
+  </p>
+
+  <div class="step-row"><span class="n">۱</span><div class="t"><div class="tt">اجرای پنل</div><div class="tx">روی <span class="inline-code">Start-MahDeploy.bat</span> دوبار کلیک کنید. پنل پورت ۳۰۰۰ را چک می‌کند، دیتابیس آماده می‌شود و مرورگر به‌صورت خودکار روی <span class="inline-code">http://localhost:3000</span> باز می‌شود. برای پورت دلخواه: <span class="inline-code">Start-MahDeploy.bat 8080</span></div></div></div>
+  <div class="step-row"><span class="n">۲</span><div class="t"><div class="tt">نخستین ورود</div><div class="tx">با رمز پیش‌فرض <span class="inline-code">admin1234</span> وارد شوید. صفحه ورود، دکمه «راهنمای ورود و شروع سریع» دارد که همین سه گام را داخل پنل هم نشان می‌دهد.</div></div></div>
+  <div class="step-row"><span class="n">۳</span><div class="t"><div class="tt">تغییر رمز عبور</div><div class="tx">از دکمه چرخ‌دنده در نوار بالا، رمز جدید با حداقل ۸ کاراکتر ثبت کنید. این کار را قبل از هر استقرار واقعی انجام دهید.</div></div></div>
+  <div class="step-row"><span class="n">۴</span><div class="t"><div class="tt">(اختیاری) ثبت به‌عنوان سرویس ویندوز</div><div class="tx">در PowerShell با دسترسی Administrator داخل پوشه پکیج: <span class="inline-code">powershell -ExecutionPolicy Bypass -File .\service-install.ps1</span> — پنل با نام سرویس «MahDeploy Panel» ثبت می‌شود، با بوت سرور بالا می‌آید و پس از کرش خودکار ری‌استارت می‌شود. حذف: <span class="inline-code">service-uninstall.ps1</span></div></div></div>
+  <div class="step-row"><span class="n">۵</span><div class="t"><div class="tt">(اختیاری) دسترسی از شبکه</div><div class="tx">برای باز کردن پنل از سایر سیستم‌ها، پورت را در فایروال باز کنید: <span class="inline-code">New-NetFirewallRule -DisplayName "MahDeploy Panel" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow</span></div></div></div>
+
+  <div class="callout tip"><b>ساختار پکیج:</b> پوشه <span class="inline-code">app</span> برنامه پنل، <span class="inline-code">runtime</span> ران‌تایم Node.js، <span class="inline-code">data\mahdeploy.db</span> دیتابیس پنل و <span class="inline-code">logs</span> لاگ‌های اجراست. پشتیبان‌گیری کامل = کپی کل پوشه.</div>
+  <div class="callout warn"><b>دسترسی Administrator:</b> برای اجرای عملیات واقعی استقرار (PowerShell، سرویس ویندوز، Nginx) پنل را در نشستی با دسترسی ادمین اجرا کنید؛ در غیر این صورت پنل فقط حالت نمایشی دارد.</div>
+
+  <!-- ═══════ فصل ۳ ═══════ -->
+  <div class="chapter-header" id="ch3">
+    <span class="ch-tag">CHAPTER 03</span>
+    <h2>داشبورد سلامت سرور</h2>
+    <p class="lead">نگاه اول: سرور حالا در چه وضعیتی است و چه چیزی روی آن در حال اجراست.</p>
+    <div class="divider"></div>
+  </div>
+
+  <p class="body-text">
+    داشبورد نخستین صفحه پس از ورود است و داده‌هایش هر ۴ ثانیه تازه می‌شود. چهار کارت بالای صفحه وضعیت لحظه‌ای را
+    نشان می‌دهند و ردیف‌های پایین، جزئیات محیط اجرا و رویدادهای اخیر را.
+  </p>
+
+  <table>
+    <thead><tr><th style="width:26%;">ویجت</th><th>چه چیزی نشان می‌دهد</th><th style="width:34%;">چگونه بخوانیم</th></tr></thead>
+    <tbody>
+      <tr><td><b>پردازنده</b></td><td>درصد مصرف فعلی CPU با نمودار روند اخیر و تعداد هسته‌ها</td><td>عدد بزرگ درصد مصرف است؛ نمودار کوچک، چند دقیقه اخیر را خلاصه می‌کند</td></tr>
+      <tr><td><b>حافظه RAM</b></td><td>درصد مصرف رم و مقدار مصرف‌شده از کل (گیگابایت)</td><td>اگر بالای ۸۵٪ پایدار بماند، برای استقرار جدید جا باز کنید</td></tr>
+      <tr><td><b>دیسک</b></td><td>درصد اشغال دیسک اصلی و فضای آزاد باقی‌مانده</td><td>نوار رنگی زیر عدد، نسبت اشغال را بصری نشان می‌دهد</td></tr>
+      <tr><td><b>Nginx</b></td><td>نصب و فعال‌بودن وب‌سرور، نتیجه تست کانفیگ، تعداد سایت‌های فعال</td><td>حالت قرمز یعنی Nginx نصب نیست یا اجرا نمی‌شود — پیش‌نیاز استقرار</td></tr>
+      <tr><td><b>محیط اجرا</b></td><td>نسخه Python، Node.js، Nginx و آپ‌تایم سرور</td><td>موارد سبز آماده استقرارند؛ «نصب نیست» یعنی باید پیش از استقرار نصب شود</td></tr>
+      <tr><td><b>سامانه‌های مستقر</b></td><td>خلاصه تعداد فعال/ناموفق/کل به‌همراه فهرست کوتاه</td><td>دکمه «مدیریت سامانه‌ها» به تب مربوطه می‌رود</td></tr>
+      <tr><td><b>نقشه پورت‌ها</b></td><td>همه پورت‌های در حال شنیدن با نام فرآیند و PID</td><td>پورت‌های مربوط به استقرارها با برچسب فیروزه‌ای مشخص شده‌اند</td></tr>
+      <tr><td><b>جریان رویدادها</b></td><td>آخرین عملیات‌ها: ورود، تولید پلن، اجرای اسکریپت‌ها، خطاها</td><td>رنگ نقطه کنار هر رویداد، سطح آن (موفق/خطا/اطلاع) را نشان می‌دهد</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout tip"><b>دکمه «راهنمای داشبورد»</b> در بالای همین صفحه، معرفی کوتاه‌تری از همین ویجت‌ها را داخل پنل نشان می‌دهد.</div>
+
+  <!-- ═══════ فصل ۴ ═══════ -->
+  <div class="chapter-header" id="ch4">
+    <span class="ch-tag">CHAPTER 04</span>
+    <h2>ویزارد استقرار — گام‌به‌گام</h2>
+    <p class="lead">قلب سامانه: از هویت سامانه تا ترمینال زنده، در پنج مرحله کنترل‌شده.</p>
+    <div class="divider"></div>
+  </div>
+
+  <p class="body-text">
+    در تب «استقرار جدید» یک نوار پیشرو (Stepper) می‌بینید که جایگاه شما را نشان می‌دهد و زیر آن دکمه
+    <b>«راهنمای مرحله X»</b> قرار دارد که همان مرحله را داخل پنل توضیح می‌دهد. تا مرحله قبل کامل نشود، مرحله بعد
+    باز نمی‌شود — این محدودیت عمدی است تا هیچ استقراری با اطلاعات ناقص شروع نشود.
+  </p>
+
+  <div class="step-row"><span class="n">۱</span><div class="t"><div class="tt">هویت سامانه</div><div class="tx">«نام نمایشی» فارسی برای پنل است؛ «شناسه سامانه» اسلاگ انگلیسی (مثل <span class="inline-code">docs-manager</span>) که خودکار ساخته می‌شود و در نام سرویس ویندوز، مسیر پوشه‌ها و فایل کانفیگ Nginx به کار می‌رود — به همین دلیل فقط حروف کوچک انگلیسی، عدد و خط تیره می‌پذیرد. منبع کد را هم اینجا انتخاب می‌کنید: «مسیر پوشه روی سرور» یا «آپلود ZIP» تا ۳۰۰ مگابایت. ساختار استاندارد کد: پوشه <span class="inline-code">backend</span> برای FastAPI و <span class="inline-code">frontend</span> برای React.</div></div></div>
+
+  <div class="step-row"><span class="n">۲</span><div class="t"><div class="tt">دامنه و پورت</div><div class="tx">دامنه‌ای که از قبل خریده‌اید و رکورد A آن به IP همین سرور اشاره می‌کند. پورت بک‌اند را می‌توانید دستی بدهید یا با دکمه پیشنهاد، نخستین پورت آزاد (از ۸۰۰۱ به بعد) خودکار وارد شود. دکمه‌های «بررسی» بلافاصله رزولوشن DNS و آزاد بودن پورت را می‌سنجند و نتیجه زیر فیلد نمایش داده می‌شود. پیش‌نمایش معماری پایین صفحه، مسیر ترافیک را قبل از نصب نشان می‌دهد.</div></div></div>
+
+  <div class="step-row"><span class="n">۳</span><div class="t"><div class="tt">مسیرها و گواهی SSL</div><div class="tx">مسیر پایه استقرار (پیش‌فرض <span class="inline-code">C:\deployments</span>)، مسیر نصب Nginx (پیش‌فرض <span class="inline-code">C:\nginx</span>) و مسیر دو فایل گواهی (<span class="inline-code">.crt/.pem</span> و <span class="inline-code">.key</span>) دامنه. با دکمه «اعتبارسنجی گواهی SSL» وجود فایل‌ها و تطابق دامنهٔ گواهی کنترل می‌شود. زیر هر سامانه این ساختار ساخته می‌شود:</div></div></div>
+
+  <div class="codeblock">
+    <div class="cb-head">standard deployment layout — C:\deployments\&lt;name&gt;</div>
+    <pre>C:\deployments\docs-manager\
+├── backend\        <span class="c">← FastAPI + .venv (virtual environment)</span>
+├── frontend\       <span class="c">← React source</span>
+├── www\            <span class="g">← production build (served by Nginx)</span>
+├── service\        <span class="c">← WinSW service wrapper</span>
+├── logs\           <span class="c">← app &amp; service logs</span>
+└── scripts\        <span class="c">← generated PowerShell scripts</span></pre>
+  </div>
+
+  <div class="step-row"><span class="n">۴</span><div class="t"><div class="tt">بررسی نهایی پیش از استقرار</div><div class="tx">همه پیش‌نیازها یک‌جا و زنده کنترل می‌شوند. معنی رنگ‌ها:</div></div></div>
+
+  <div class="legend">
+    <div class="item ok"><b>سبز — موفق</b><span>بررسی پاس شد؛ می‌توانید ادامه دهید.</span></div>
+    <div class="item warn"><b>زرد — هشدار</b><span>مانع جدی نیست (مثل DNS تازه ثبت‌شده که هنوز منتشر نشده) ولی بدانید چه می‌کنید.</span></div>
+    <div class="item fail"><b>قرمز — قطع‌کننده</b><span>استقرار ممکن نیست؛ مورد را اصلاح و دوباره «بررسی مجدد» بگیرید.</span></div>
+  </div>
+
+  <p class="body-text">
+    وقتی همه موارد سبز شد، دکمه <b>«تولید پلن PowerShell استقرار»</b> فعال می‌شود. پلن یعنی ۶ اسکریپت استاندارد که
+    به‌ترتیب اجرا خواهند شد — و پیش از اجرا، محتوای کامل هرکدام قابل مشاهده، کپی و دانلود است:
+  </p>
+
+  <table>
+    <thead><tr><th style="width:22%;">اسکریپت</th><th>کار دقیق آن روی سرور</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tdcode">01-preflight.ps1</span></td><td>چک نهایی لحظه اجرا: پورت، دیسک، دسترسی نوشتن، وجود Python و Nginx</td></tr>
+      <tr><td><span class="tdcode">02-prepare.ps1</span></td><td>ساخت ساختار پوشه استاندارد و کپی/استخراج کد منبع به مسیر نهایی</td></tr>
+      <tr><td><span class="tdcode">03-backend.ps1</span></td><td>ساخت محیط مجازی، نصب وابستگی‌ها و ثبت سرویس ویندوز با WinSW</td></tr>
+      <tr><td><span class="tdcode">04-frontend.ps1</span></td><td>نصب پکیج‌ها، بیلد React و انتقال خروجی به پوشه www</td></tr>
+      <tr><td><span class="tdcode">05-nginx.ps1</span></td><td>نوشتن کانفیگ HTTPS، افزودن قاعده فایروال، تست و ریلود Nginx</td></tr>
+      <tr><td><span class="tdcode">06-verify.ps1</span></td><td>تست نهایی HTTP و وضعیت سرویس؛ تأیید سلامت کل زنجیره</td></tr>
+    </tbody>
+  </table>
+
+  <div class="step-row"><span class="n">۵</span><div class="t"><div class="tt">اجرا و گزارش زنده</div><div class="tx">چک‌باکس تأیید را بزنید و «اجرای استقرار» را کلیک کنید. اسکریپت‌ها با دسترسی Administrator به‌ترتیب اجرا می‌شوند و هر خط خروجی، همان لحظه در ترمینال رنگ‌بندی‌شده دیده می‌شود (سبز موفق، زرد هشدار، قرمز خطا). با کلیک روی هر مرحله در ستون کناری، کد کامل همان اسکریپت باز می‌شود. در پایان موفق، لینک مستقیم <span class="inline-code">https://دامنه</span>، نام سرویس و مسیر کانفیگ Nginx نمایش داده می‌شود و کارت سامانه در تب «سامانه‌ها» ثبت می‌گردد.</div></div></div>
+
+  <div class="callout ok"><b>فلسفه استقراربان:</b> تا همه بررسی‌ها سبز نشوند هیچ خطی روی سرور اجرا نمی‌شود؛ و پیش از اجرا هم همه‌چیز با چشم خودتان قابل بازبینی است.</div>
+
+  <!-- ═══════ فصل ۵ ═══════ -->
+  <div class="chapter-header" id="ch5">
+    <span class="ch-tag">CHAPTER 05</span>
+    <h2>مدیریت سامانه‌های مستقرشده</h2>
+    <p class="lead">چرخه حیات سامانه‌ها پس از استقرار: وضعیت، عملیات سرویس، جزئیات فنی و حذف کامل.</p>
+    <div class="divider"></div>
+  </div>
+
+  <p class="body-text">
+    تب «سامانه‌ها» برای هر استقرار یک کارت می‌سازد: نام نمایشی و دامنه، پورت بک‌اند، مسیر پوشه استقرار، زمان آخرین
+    استقرار و نشان وضعیت. چهار دکمه پایین هر کارت، کل چرخه حیات را پوشش می‌دهند و دکمه «راهنمای مدیریت سامانه‌ها»
+    در بالای همین صفحه، معادل داخل‌پنلیِ این فصل است.
+  </p>
+
+  <table>
+    <thead><tr><th style="width:22%;">نشان وضعیت</th><th style="width:38%;">معنا</th><th>واکنش پیشنهادی</th></tr></thead>
+    <tbody>
+      <tr><td><b style="color:#6EE7B7;">فعال</b></td><td>سرویس ویندوز در حال اجراست و سایت پاسخ می‌دهد</td><td>هیچ کاری لازم نیست؛ از لینک دامنه استفاده کنید</td></tr>
+      <tr><td><b style="color:#CBD5E1;">متوقف</b></td><td>سرویس با دکمه توقف، Stop شده است</td><td>در صورت نیاز، با دکمه Play شروع کنید</td></tr>
+      <tr><td><b style="color:#FB7185;">ناموفق</b></td><td>استقرار یا اجرای سرویس با خطا مواجه شده</td><td>جزئیات ← تب «خروجی استقرار» ← علت را از لاگ قرمز بخوانید</td></tr>
+      <tr><td><b style="color:#FCD34D;">در حال استقرار</b></td><td>عملیات استقرار در جریان است</td><td>صبر کنید تا مراحل کامل شوند</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>شروع / توقف / ری‌استارت</h4><p>سه دکمه کنار کارت، سرویس ویندوز <span class="inline-code">deployguard-&lt;name&gt;</span> را مدیریت می‌کنند و نتیجه با اعلان (Toast) اعلام می‌شود. ری‌استارت برای اعمال تغییرات کد بک‌اند کافی است.</p></div>
+    <div class="card"><h4><span class="dot"></span>پنجره جزئیات</h4><p>چهار تب دارد: «خروجی استقرار» (نتیجه ۶ اسکریپت با لاگ هرکدام)، «اسکریپت‌های PowerShell» (کد کامل + کپی/دانلود)، «کانفیگ Nginx» (محتوای فایل conf) و «رویدادها» (لاگ‌های ثبت‌شده).</p></div>
+  </div>
+
+  <div class="callout warn"><b>حذف کامل:</b> با تأیید دومرحله‌ای انجام می‌شود — سرویس ویندوز حذف، کانفیگ Nginx پاک و ریلود می‌شود، لاگ‌ها آرشیو و پوشه سامانه (شامل دیتابیس خودِ اپ) حذف می‌گردد. این عملیات برگشت‌پذیر نیست؛ پیش از آن از پوشه <span class="inline-code">logs</span> و داده‌ها پشتیبان بگیرید.</div>
+
+  <!-- ═══════ فصل ۶ ═══════ -->
+  <div class="chapter-header" id="ch6">
+    <span class="ch-tag">CHAPTER 06</span>
+    <h2>امنیت و نگهداری</h2>
+    <p class="lead">چند عادت ساده که پنل و سرور شما را سالم و امن نگه می‌دارد.</p>
+    <div class="divider"></div>
+  </div>
+
+  <div class="step-row"><span class="n">۱</span><div class="t"><div class="tt">رمز عبور</div><div class="tx">رمز پیش‌فرض <span class="inline-code">admin1234</span> را بلافاصله تغییر دهید و رمز قوی (حداقل ۸ کاراکتر) انتخاب کنید. نشست ورود ۱۲ ساعت اعتبار دارد و با امضای HMAC در کوکی محافظت می‌شود.</div></div></div>
+  <div class="step-row"><span class="n">۲</span><div class="t"><div class="tt">دسترسی به پنل</div><div class="tx">پنل را فقط در شبکه مورد اعتماد در دسترس نگه دارید؛ برای انتشار از طریق اینترنت، جلوی پنل هم Nginx + SSL بگذارید و پورت ۳۰۰۰ را مستقیم باز نکنید.</div></div></div>
+  <div class="step-row"><span class="n">۳</span><div class="t"><div class="tt">شفافیت اسکریپت‌ها</div><div class="tx">اسکریپت‌های PowerShell پیش از اجرا نمایش داده می‌شوند و اجرای استقرار نیازمند تأیید صریح شماست. اسکریپت‌ها به‌طور موقت در <span class="inline-code">%TEMP%\deployguard</span> نوشته و پس از اجرا حذف می‌شوند.</div></div></div>
+  <div class="step-row"><span class="n">۴</span><div class="t"><div class="tt">پشتیبان‌گیری</div><div class="tx">دیتابیس پنل یک فایل است: <span class="inline-code">data\mahdeploy.db</span> — کپی همین فایل (یا کل پوشه پکیج) یعنی پشتیبان کامل از کاربران، استقرارها و لاگ‌ها. برای سامانه‌های مستقرشده هم پوشه هر اپ را جداگانه پشتیبان بگیرید.</div></div></div>
+  <div class="step-row"><span class="n">۵</span><div class="t"><div class="tt">به‌روزرسانی و انتقال</div><div class="tx">برای انتقال به سرور جدید، کافی است کل پوشه پکیج را کپی کنید — همه‌چیز (حتی نشست‌ها و تنظیمات) حفظ می‌شود. نسخه‌های جدید پکیج را از صفحه Releases مخزن گیت‌هاب دریافت کنید.</div></div></div>
+
+  <div class="callout tip"><b>فایروال:</b> پنل هنگام استقرار، قاعده فایروال پورت بک‌اند را خودکار می‌سازد؛ برای خود پنل (پورت ۳۰۰۰) در صورت نیاز دستی اقدام کنید — دستور در فصل ۲ آمده است.</div>
+
+  <!-- ═══════ فصل ۷ ═══════ -->
+  <div class="chapter-header" id="ch7">
+    <span class="ch-tag">CHAPTER 07</span>
+    <h2>عیب‌یابی و پرسش‌های رایج</h2>
+    <p class="lead">هفت حالت پرتکرار با علت و راه‌حل. برای ردیابی دقیق‌تر، لاگ‌ها بهترین دوست شما هستند: در پنل مسیر «سامانه‌ها ← جزئیات ← رویدادها» و روی دیسک پوشه logs پکیج و هر سامانه.</p>
+    <div class="divider"></div>
+  </div>
+
+  <table class="splittable">
+    <thead><tr><th style="width:26%;">مشکل</th><th style="width:34%;">علت احتمالی</th><th>راه‌حل</th></tr></thead>
+    <tbody>
+      <tr><td>پنل بالا نمی‌آید / پیام «پورت اشغال»</td><td>پورت ۳۰۰۰ توسط برنامه دیگری استفاده می‌شود</td><td>با پورت دیگر اجرا کنید: <span class="tdcode">Start-MahDeploy.bat 3100</span></td></tr>
+      <tr><td>بررسی دامنه قرمز است</td><td>رکورد A تنظیم نیست یا هنوز منتشر نشده</td><td>در پنل دامنه، رکورد A را روی IP سرور ثبت و پس از انتشار «بررسی مجدد» بگیرید</td></tr>
+      <tr><td>بررسی پورت قرمز است</td><td>پورت انتخابی اشغال است</td><td>از دکمه پیشنهاد پورت آزاد استفاده کنید یا عدد دیگری بدهید</td></tr>
+      <tr><td>اعتبارسنجی SSL شکست می‌خورد</td><td>مسیر فایل‌ها اشتباه است یا گواهی به دامنه تعلق ندارد</td><td>مسیر دقیق <span class="tdcode">.crt</span> و <span class="tdcode">.key</span> را کنترل و تطابق دامنه گواهی را بررسی کنید</td></tr>
+      <tr><td>استقرار وسط کار متوقف شد</td><td>شکست یکی از ۶ اسکریپت</td><td>خروجی قرمز همان مرحله را بخوانید؛ مشکل را رفع و پلن را دوباره اجرا کنید</td></tr>
+      <tr><td>سایت باز نمی‌شود ولی سرویس فعال است</td><td>فایروال یا کانفیگ Nginx</td><td>قاعده فایروال پورت ۴۴۳ و ۸۰ و فایل <span class="tdcode">conf.d\&lt;name&gt;.conf</span> را بررسی کنید</td></tr>
+      <tr><td>رمز عبور را فراموش کردم</td><td>—</td><td>فایل <span class="tdcode">data\mahdeploy.db</span> را حذف کنید؛ پنل با رمز پیش‌فرض از نو راه‌اندازی می‌شود (تمام داده‌های پنل پاک می‌شود)</td></tr>
+    </tbody>
+  </table>
+
+
+</div>
+
+<!-- ═══════════════════ ENDING ═══════════════════ -->
+<div class="ending">
+  <div class="bg">
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+  </div>
+  <div class="content">
+    <div class="brand-sm">استقرار<em>بان</em></div>
+    <div class="latin">MAHDEPLOY V1.1.0</div>
+    <p class="tagline">
+      از پیش‌بررسی تا ترمینال زنده — استقرار استاندارد FastAPI + React روی ویندوز سرور،
+      بدون نصب هیچ پیش‌نیازی، با رابط فارسی و گزارش شفاف PowerShell.
+    </p>
+    <div class="recap">
+      <span class="pill">۱ · داشبورد سرور</span>
+      <span class="pill">۲ · ویزارد ۵ مرحله‌ای</span>
+      <span class="pill">۳ · مدیریت سامانه‌ها</span>
+    </div>
+    <div class="meta-line">
+      سند رسمی راهنمای کاربر — نسخه ۱.۱.۰ — آبان ۱۴۰۵<br>
+      <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
+    </div>
+    <div class="rule"></div>
+  </div>
+</div>
+
+
+</body>
+</html>

@@ -6,6 +6,7 @@ import {
   ShieldCheck, AlertTriangle, Clock, TerminalSquare, CircleCheck, Rocket, FlaskConical,
 } from "lucide-react";
 import { GlassCard, Sparkline, Ticker, StatusDot, fa, faTime } from "./bits";
+import { HelpButton } from "./help";
 import type { PortUsage, ServerStatus } from "@/lib/types";
 
 interface DeployRow {
@@ -41,6 +42,11 @@ export function DashboardTab({
 
   return (
     <div className="space-y-5">
+      {/* section help */}
+      <div className="flex justify-start">
+        <HelpButton topic="dashboard" label="راهنمای داشبورد" variant="chip" />
+      </div>
+
       {/* simulation banner */}
       {status?.mode === "simulation" && (
         <motion.div

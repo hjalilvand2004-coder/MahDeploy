@@ -13,6 +13,7 @@ import { LoginScreen } from "@/components/deployer/login";
 import { DashboardTab } from "@/components/deployer/dashboard";
 import { DeployWizard } from "@/components/deployer/wizard";
 import { SystemsTab } from "@/components/deployer/systems";
+import { HeaderHelpButton } from "@/components/deployer/help";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { PortUsage, ServerStatus } from "@/lib/types";
 
@@ -232,6 +233,7 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            <HeaderHelpButton />
             {status?.mode === "simulation" && (
               <span className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold text-teal-200 border border-teal-400/25 bg-teal-400/10 rounded-full px-2.5 py-1.5">
                 <FlaskConical className="w-3 h-3" /> پیش‌نمایش

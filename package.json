@@ -1,6 +1,6 @@
 {
   "name": "mahdeploy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "MahDeploy — Persian Windows deployment manager panel for FastAPI + React apps (portable, no Python/Node installation required)",
   "scripts": {
@@ -62,6 +62,9 @@
     "next-auth": "^4.24.11",
     "next-intl": "^4.3.4",
     "next-themes": "^0.4.6",
+    "pagedjs": "^0.4.3",
+    "pdf-lib": "^1.17.1",
+    "playwright-core": "^1.64.1",
     "prisma": "^6.11.1",
     "react": "^19.0.0",
     "react-day-picker": "^9.8.0",

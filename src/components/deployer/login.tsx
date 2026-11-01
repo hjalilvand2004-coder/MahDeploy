@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Rocket, Lock, Eye, EyeOff, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 import { AuroraBackground } from "./bits";
+import { HelpButton } from "./help";
 
 export function LoginScreen({
   onSuccess,
@@ -113,6 +114,10 @@ export function LoginScreen({
               ورود به پنل استقرار
             </button>
           </form>
+
+          <div className="flex justify-center mt-5">
+            <HelpButton topic="login" label="راهنمای ورود و شروع سریع" variant="chip" />
+          </div>
 
           {simulation && (
             <div className="mt-6 rounded-xl border border-teal-400/20 bg-teal-400/[0.06] p-3 flex items-start gap-2.5">

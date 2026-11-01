@@ -10,6 +10,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { GlassCard, CheckRow, LiveConsole, CodeBlock, StatusDot, fa, faTime } from "./bits";
+import { HelpButton, type HelpTopic } from "./help";
 import type { CheckResult, GeneratedScript, StepState } from "@/lib/types";
 
 /* ------------------------------------------------------------------ */
@@ -424,6 +425,9 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
             );
           })}
         </ol>
+        <div className="flex justify-end mt-2.5">
+          <HelpButton topic={`wizard-step${step}` as HelpTopic} label={`راهنمای مرحله ${fa(step)}`} variant="chip" />
+        </div>
       </GlassCard>
 
       <AnimatePresence mode="wait">

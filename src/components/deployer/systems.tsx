@@ -9,6 +9,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { GlassCard, StatusDot, CodeBlock, LiveConsole, fa, faTime } from "./bits";
+import { HelpButton } from "./help";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { GeneratedScript, StepState } from "@/lib/types";
@@ -128,6 +129,11 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
 
   return (
     <div className="space-y-5">
+      {/* section help */}
+      <div className="flex justify-start">
+        <HelpButton topic="systems" label="راهنمای مدیریت سامانه‌ها" variant="chip" />
+      </div>
+
       {deployments.length === 0 && (
         <GlassCard className="text-center py-14">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center mx-auto mb-4 rotate-3">

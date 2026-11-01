@@ -24,7 +24,7 @@
 
 نیازی به نصب **هیچ** پیش‌نیازی نیست — Node.js و تمام ران‌تایم‌ها داخل بسته هستند:
 
-1. فایل `MahDeploy-Portable-Windows-x64-v1.0.0.zip` را از بخش [Releases](../../releases) دانلود کنید
+1. فایل `MahDeploy-Portable-Windows-x64-v1.1.0.zip` را از بخش [Releases](../../releases) دانلود کنید
 2. در مسیر دلخواه (پیشنهاد: `C:\MahDeploy`) باز کنید
 3. روی `Start-MahDeploy.bat` دوبار کلیک کنید → پنل روی `http://localhost:3000` باز می‌شود
 4. ورود: `admin` / `admin1234` — و بلافاصله رمز را عوض کنید!
@@ -35,6 +35,13 @@
 | رم | ۵۱۲ مگابایت آزاد |
 | دیسک | ۳۰۰ مگابایت |
 | پیش‌نیاز نرم‌افزاری | **هیچ!** (نه پایتون، نه Node، نه دیتابیس) |
+
+
+## 📖 مستند راهنما
+
+- **PDF مصور فارسی**: `docs/MahDeploy-Guide-fa.pdf` — راهنمای جامع کاربر در ۱۰ صفحه (کاور، فهرست، ۷ فصل، عیب‌یابی)
+- **راهنمای درون‌برنامه‌ای**: از نسخه ۱.۱.۰ هر صفحهٔ پنل دکمه «راهنما» دارد و توضیح همان بخش را بدون خروج از پنل نمایش می‌دهد
+- منبع HTML راهنما: `docs/guide/` (قابل بازسازی با هر مرورگری)
 
 ## 🛠 ساخت سرویس ویندوز (شروع خودکار)
 
@@ -51,7 +58,7 @@ powershell -ExecutionPolicy Bypass -File .\service-uninstall.ps1   # حذف سر
 powershell -ExecutionPolicy Bypass -File .\build-portable.ps1
 ```
 
-خروجی: `dist\MahDeploy-Portable-Windows-x64-v1.0.0.zip` (نیازمند Node.js 20+ و اینترنت)
+خروجی: `dist\MahDeploy-Portable-Windows-x64-v1.1.0.zip` (نیازمند Node.js 20+ و اینترنت)
 
 ساخت از سورس (لینوکس/macOS یا WSL):
 

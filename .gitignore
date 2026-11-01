@@ -69,3 +69,8 @@ server.log
 .zscripts
 /Caddyfile
 /mini-services
+
+# pdf build workspace (canonical copy lives in docs/guide)
+/pdf-guide
+package-lock.json
+/tool-results
