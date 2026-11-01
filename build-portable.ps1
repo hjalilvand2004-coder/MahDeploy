@@ -49,6 +49,10 @@ foreach ($p in @("node_modules\typescript","node_modules\sharp","node_modules\@i
 # portable launcher assets (bat / ps1 / xml / bootstrap / readme)
 Copy-Item "$root\portable-assets\*" $pkg -Force
 Copy-Item "$root\portable-assets\mahdeploy.js" "$pkg\app\mahdeploy.js" -Force
+# illustrated Persian user guide (PDF) ships inside the package
+if (Test-Path "$root\docs\MahDeploy-Guide-fa.pdf") {
+    Copy-Item "$root\docs\MahDeploy-Guide-fa.pdf" "$pkg\MahDeploy-Guide-fa.pdf" -Force
+}
 
 # pristine database (schema only — created on the build machine via prisma)
 Write-Host "[5/7] Creating pristine SQLite database ..." -ForegroundColor Cyan

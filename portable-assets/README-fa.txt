@@ -60,6 +60,7 @@
   MahDeploy\
    ├─ Start-MahDeploy.bat      ← اجرای پنل (دوبار کلیک)
    ├─ Stop-MahDeploy.bat       ← توقف پنل
+   ├─ MahDeploy-Guide-fa.pdf  ← 📖 راهنمای جامع کاربر (PDF مصور)
    ├─ service-install.ps1      ← ثبت سرویس ویندوز
    ├─ service-uninstall.ps1    ← حذف سرویس ویندوز
    ├─ service.xml              ← تنظیمات سرویس (WinSW)
@@ -103,5 +104,6 @@
   ✔ ثبت بک‌اند FastAPI به‌عنوان سرویس ویندوز با WinSW (شروع خودکار)
   ✔ مدیریت سیستم‌های مستقرشده: شروع / توقف / ری‌استارت / حذف
   ✔ رابط کاربری فارسی (RTL) با طراحی شیشه‌ای مدرن
+  ✔ راهنمای درون‌برنامه‌ای: هر بخش پنل دکمه «راهنما» دارد + مستند PDF مصور فارسی
 
-  MahDeploy v1.0.0 — ساخته‌شده با Next.js + Prisma + SQLite
+  MahDeploy v1.1.0 — ساخته‌شده با Next.js + Prisma + SQLite
