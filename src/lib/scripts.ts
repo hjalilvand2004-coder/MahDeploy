@@ -48,10 +48,13 @@ function transcriptBlock(file: string): string {
   const dir = file.replace(/\\[^\\]+$/, "");
   return `
 $logDir = ${pq(dir)}
-if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
-Start-Transcript -Path ${pq(file)} -Append | Out-Null
+if (-not (Test-Path $logDir)) { try { New-Item -ItemType Directory -Path $logDir -Force | Out-Null } catch {} }
+try { Start-Transcript -Path ${pq(file)} -Append | Out-Null } catch { Write-Host "[WARN] transcript unavailable: $($_.Exception.Message)" -ForegroundColor Yellow }
 `;
 }
+
+/** guarded transcript stop - never flips the exit code */
+const STOP_TRANSCRIPT = `try { Stop-Transcript | Out-Null } catch {}`;
 
 /* ------------------------------------------------------------------ */
 /* Nginx configuration                                                 */
@@ -178,6 +181,8 @@ export function generateWinSWXml(cfg: DeployConfig): string {
 const COMMON_PARAMS = (cfg: DeployConfig) => `
 param([switch]$Silent)
 $ErrorActionPreference = 'Stop'
+# keep console output UTF-8 so the panel reads every line correctly
+try { [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false) } catch {}
 ${cfgBlock(cfg)}
 `;
 
@@ -202,19 +207,38 @@ if ($conn) {
 Check ("Port {0} is free" -f $cfg.BackendPort) (-not $conn) $(if ($owner) { "occupied by $owner" } else { "" })
 
 # 2) SSL certificate files ------------------------------------------------
-Check "SSL certificate file exists" (Test-Path $cfg.SslCertPath) $cfg.SslCertPath
-Check "SSL private key file exists"  (Test-Path $cfg.SslKeyPath) $cfg.SslKeyPath
+Check "SSL certificate file exists" (Test-Path $cfg.SslCertPath) $(if (Test-Path $cfg.SslCertPath) { $cfg.SslCertPath } else { "$($cfg.SslCertPath)  <- copy the .pem certificate here or fix the path in wizard step 1" })
+Check "SSL private key file exists"  (Test-Path $cfg.SslKeyPath) $(if (Test-Path $cfg.SslKeyPath) { $cfg.SslKeyPath } else { "$($cfg.SslKeyPath)  <- copy the .pem private key here or fix the path in wizard step 1" })
 
 # 3) Nginx ----------------------------------------------------------------
 $nginxExe = Join-Path $cfg.NginxPath 'nginx.exe'
-$nginxVer = & $nginxExe -v 2>&1
-Check "Nginx binary" (Test-Path $nginxExe) ($nginxVer -join ' ')
+$nginxVer = ''
+if (Test-Path $nginxExe) {
+  # nginx -v writes to stderr; under EAP=Stop the 2>&1 redirect would turn
+  # stderr lines into terminating errors, so relax EAP around native probes
+  $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  $nginxVer = ((& $nginxExe -v 2>&1) | Out-String).Trim()
+  $ErrorActionPreference = $prevEap
+}
+Check "Nginx binary" (Test-Path $nginxExe) $(if (Test-Path $nginxExe) { $nginxVer } else { "not found at $nginxExe - install Nginx or fix the path in wizard step 1" })
 
 # 4) Runtime requirements -------------------------------------------------
 $py = (Get-Command python -ErrorAction SilentlyContinue)
-Check "Python available" ($null -ne $py) $(if ($py) { (python --version 2>&1) } else { "not found in PATH" })
+$pyVer = ''
+if ($py) {
+  $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  $pyVer = ((python --version 2>&1) | Out-String).Trim()
+  $ErrorActionPreference = $prevEap
+}
+Check "Python available" ($null -ne $py) $(if ($py) { $pyVer } else { "not found in PATH" })
 $node = (Get-Command node -ErrorAction SilentlyContinue)
-Check "Node.js available" ($null -ne $node) $(if ($node) { (node --version 2>&1) } else { "not found in PATH" })
+$nodeVer = ''
+if ($node) {
+  $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  $nodeVer = ((node --version 2>&1) | Out-String).Trim()
+  $ErrorActionPreference = $prevEap
+}
+Check "Node.js available" ($null -ne $node) $(if ($node) { $nodeVer } else { "not found in PATH" })
 
 # 5) Domain DNS resolves to this server -----------------------------------
 $localIPs = @(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty IPAddress)
@@ -239,17 +263,25 @@ if ($cfg.SourceType -eq 'path') {
 }
 
 # 7) Destination ----------------------------------------------------------
-$parent = Split-Path $cfg.DeployPath -Parent
-Check "Destination drive/parent writable" (Test-Path $parent) $parent
+$driveRoot = [System.IO.Path]::GetPathRoot($cfg.DeployPath)
+$deployParent = Split-Path $cfg.DeployPath -Parent
+if ((Test-Path $driveRoot) -and -not (Test-Path $deployParent)) {
+  try {
+    New-Item -ItemType Directory -Path $deployParent -Force | Out-Null
+    Write-Host ("[OK]   destination parent created: {0}" -f $deployParent)
+  } catch { Write-Host ("[WARN] could not create {0}: {1}" -f $deployParent, $_.Exception.Message) -ForegroundColor Yellow }
+}
+Check "Destination drive ready" ((Test-Path $driveRoot) -and (Test-Path $deployParent)) $(if (-not (Test-Path $driveRoot)) { "drive $driveRoot not found" } else { $deployParent })
 
 Write-Host ""
 if ($failures -gt 0) {
   Write-Host "[RESULT] Preflight FAILED with $failures error(s). Deployment aborted." -ForegroundColor Red
-  Stop-Transcript | Out-Null
+  Write-Host "         Fix the [FAIL] items above, then press the Retry button in the panel - no need to rebuild the plan."
+  ${STOP_TRANSCRIPT}
   exit 1
 }
 Write-Host "[RESULT] Preflight passed. Ready to deploy." -ForegroundColor Green
-Stop-Transcript | Out-Null
+${STOP_TRANSCRIPT}
 `;
 }
 
@@ -287,16 +319,20 @@ if ($cfg.SourceType -eq 'path') {
     Write-Host "[OK]   frontend source copied (robocopy /MIR)"
   } else { Write-Host "[WARN] no frontend folder - static site will be empty until first build" }
 } else {
+  if (-not (Test-Path $cfg.SourcePath)) { throw "source ZIP not found: $($cfg.SourcePath) (the panel temp upload may have been cleaned - upload the ZIP again)" }
   $stage = Join-Path $env:TEMP ("deployguard_{0}_{1}" -f $cfg.Name, (Get-Date -Format 'yyyyMMddHHmmss'))
   New-Item -ItemType Directory -Path $stage -Force | Out-Null
-  Expand-Archive -Path $cfg.SourcePath -DestinationPath $stage -Force
+  try { Expand-Archive -Path $cfg.SourcePath -DestinationPath $stage -Force }
+  catch { throw "extracting the ZIP failed: $($_.Exception.Message)" }
   Write-Host "[OK]   archive extracted to staging"
-  $inner = Get-ChildItem $stage | Where-Object { $_.PSIsContainer } | Select-Object -First 1
-  $rootDir = if ((Get-ChildItem $stage | Measure-Object).Count -eq 1 -and (Test-Path (Join-Path $inner.FullName 'backend'))) { $inner.FullName } else { $stage }
+  $entries = @(Get-ChildItem $stage)
+  $inner = $entries | Where-Object { $_.PSIsContainer } | Select-Object -First 1
+  $rootDir = if ($entries.Count -eq 1 -and $inner -and (Test-Path (Join-Path $inner.FullName 'backend'))) { $inner.FullName } else { $stage }
   $srcBackend  = Join-Path $rootDir 'backend'
   $srcFrontend = Join-Path $rootDir 'frontend'
-  if (Test-Path $srcBackend)  { robocopy $srcBackend  (Join-Path $cfg.DeployPath 'backend')  /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; Write-Host "[OK]   backend copied from archive" }
-  if (Test-Path $srcFrontend) { robocopy $srcFrontend (Join-Path $cfg.DeployPath 'frontend') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; Write-Host "[OK]   frontend copied from archive" }
+  if (-not (Test-Path $srcBackend) -and -not (Test-Path $srcFrontend)) { throw "archive has no 'backend' or 'frontend' folder - expected FastAPI backend + React frontend structure" }
+  if (Test-Path $srcBackend)  { robocopy $srcBackend  (Join-Path $cfg.DeployPath 'backend')  /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; if ($LASTEXITCODE -ge 8) { throw "robocopy backend failed with code $LASTEXITCODE" }; Write-Host "[OK]   backend copied from archive" }
+  if (Test-Path $srcFrontend) { robocopy $srcFrontend (Join-Path $cfg.DeployPath 'frontend') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; if ($LASTEXITCODE -ge 8) { throw "robocopy frontend failed with code $LASTEXITCODE" }; Write-Host "[OK]   frontend copied from archive" }
   Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
 }
 
@@ -313,7 +349,7 @@ Set-Content -Path $envFile -Value $envContent -Encoding UTF8
 Write-Host "[OK]   backend\\.env written"
 
 Write-Host "[RESULT] Preparation completed." -ForegroundColor Green
-Stop-Transcript | Out-Null
+${STOP_TRANSCRIPT}
 `;
 }
 
@@ -324,6 +360,7 @@ $backendDir = Join-Path $cfg.DeployPath 'backend'
 Push-Location $backendDir
 
 # 1) virtual environment --------------------------------------------------
+if (-not (Get-Command python -ErrorAction SilentlyContinue)) { throw "python not found in PATH - install Python 3.11+ (64-bit), re-open the panel and re-run" }
 if (-not (Test-Path (Join-Path $backendDir '.venv'))) {
   python -m venv .venv
   if ($LASTEXITCODE -ne 0) { throw "python -m venv failed" }
@@ -348,7 +385,8 @@ $winsw  = Join-Path $tools 'WinSW-x64.exe'
 if (-not (Test-Path $winsw)) {
   Write-Host "[..]   downloading WinSW v2.12.0"
   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-  Invoke-WebRequest -Uri 'https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW-x64.exe' -OutFile $winsw -UseBasicParsing
+  try { Invoke-WebRequest -Uri 'https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW-x64.exe' -OutFile $winsw -UseBasicParsing -TimeoutSec 120 }
+  catch { throw "WinSW download failed: $($_.Exception.Message) - check server internet access, or place WinSW-x64.exe manually in $tools" }
 }
 $serviceExe = Join-Path $cfg.DeployPath ('service\\{0}-service.exe' -f $cfg.Name)
 Copy-Item $winsw $serviceExe -Force
@@ -370,8 +408,9 @@ if ($existing) {
   Start-Sleep 1
 }
 & $serviceExe install
-if ($LASTEXITCODE -ne 0) { throw "service install failed" }
-Start-Service $serviceName
+if ($LASTEXITCODE -ne 0) { throw "service install failed (WinSW exit code $LASTEXITCODE)" }
+try { Start-Service $serviceName }
+catch { throw "service start failed: $($_.Exception.Message) - check wrapper logs in $(Join-Path $cfg.DeployPath 'logs')" }
 Write-Host ("[OK]   service '{0}' started" -f $serviceName)
 
 # 5) wait until port responds --------------------------------------------
@@ -387,7 +426,7 @@ Write-Host ("[OK]   backend listening on 127.0.0.1:{0}" -f $cfg.BackendPort)
 
 Pop-Location
 Write-Host "[RESULT] Backend deployment completed." -ForegroundColor Green
-Stop-Transcript | Out-Null
+${STOP_TRANSCRIPT}
 `;
 }
 
@@ -397,7 +436,7 @@ ${ADMIN_CHECK}${transcriptBlock("C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}
 $frontendDir = Join-Path $cfg.DeployPath 'frontend'
 if (-not (Test-Path (Join-Path $frontendDir 'package.json'))) {
   Write-Host "[WARN] no package.json in frontend - skipping build (static site stays as-is)"
-  Stop-Transcript | Out-Null
+  ${STOP_TRANSCRIPT}
   exit 0
 }
 Push-Location $frontendDir
@@ -425,7 +464,7 @@ Write-Host "[OK]   build published to www"
 
 Pop-Location
 Write-Host "[RESULT] Frontend deployment completed." -ForegroundColor Green
-Stop-Transcript | Out-Null
+${STOP_TRANSCRIPT}
 `;
 }
 
@@ -444,6 +483,7 @@ if (-not (Test-Path $confDir)) { New-Item -ItemType Directory -Path $confDir -Fo
 
 # ensure 'include conf.d/*.conf;' inside http{} of nginx.conf --------------
 $mainConf  = Join-Path $cfg.NginxPath 'conf\\nginx.conf'
+if (-not (Test-Path $mainConf)) { throw "nginx.conf not found at $mainConf - check the Nginx path in wizard step 1" }
 $backup    = "$mainConf.bak_deployguard"
 $content   = Get-Content $mainConf -Raw
 $includeLine = 'include conf.d/*.conf;'
@@ -475,14 +515,19 @@ foreach ($port in 80,443) {
 }
 
 # test & reload -----------------------------------------------------------
-$test = & $nginxExe -t 2>&1
-Write-Host ($test -join ' ')
-if ($LASTEXITCODE -ne 0) { throw "nginx -t failed - configuration rejected (backup at $backup)" }
+# nginx -t prints to stderr; same EAP=Stop + 2>&1 trap as preflight
+$prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+$testOut = ((& $nginxExe -t 2>&1) | Out-String).Trim()
+$testExit = $LASTEXITCODE
+$ErrorActionPreference = $prevEap
+Write-Host $testOut
+if ($testExit -ne 0) { throw "nginx -t failed (exit $testExit) - configuration rejected (backup at $backup)" }
 Write-Host "[OK]   nginx configuration test passed"
 
 $running = Get-Process nginx -ErrorAction SilentlyContinue
 if ($running) {
   & $nginxExe -s reload
+  if ($LASTEXITCODE -ne 0) { throw "nginx reload failed (exit $LASTEXITCODE)" }
   Write-Host "[OK]   nginx reloaded"
 } else {
   Start-Process -FilePath $nginxExe -WorkingDirectory $cfg.NginxPath -WindowStyle Hidden
@@ -491,7 +536,7 @@ if ($running) {
 }
 
 Write-Host "[RESULT] Nginx site is live at https://$($cfg.Domain)" -ForegroundColor Green
-Stop-Transcript | Out-Null
+${STOP_TRANSCRIPT}
 `;
 }
 
@@ -609,10 +654,15 @@ $ErrorActionPreference = 'Stop'
 $serviceName = "deployguard-${cfg.name}"
 $svc = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 if (-not $svc) { Write-Host "[FAIL] service $serviceName not found"; exit 1 }
-switch ("${action}") {
-  'start'   { Start-Service $serviceName }
-  'stop'    { Stop-Service $serviceName -Force }
-  'restart' { Restart-Service $serviceName -Force }
+try {
+  switch ("${action}") {
+    'start'   { Start-Service $serviceName }
+    'stop'    { Stop-Service $serviceName -Force }
+    'restart' { Restart-Service $serviceName -Force }
+  }
+} catch {
+  Write-Host "[FAIL] $($_.Exception.Message)"
+  exit 1
 }
 Write-Host "[OK]  $serviceName -> $((Get-Service $serviceName).Status)"
 `;

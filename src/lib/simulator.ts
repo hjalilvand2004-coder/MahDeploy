@@ -35,7 +35,7 @@ const STEPS: Record<string, StepScript> = {
       "[OK]   Source path exists",
       "[OK]   frontend folder detected  True",
       "[OK]   backend  folder detected  True",
-      "[OK]   Destination drive/parent writable",
+      "[OK]   Destination drive ready",
       "[RESULT] Preflight passed. Ready to deploy.",
     ],
   },

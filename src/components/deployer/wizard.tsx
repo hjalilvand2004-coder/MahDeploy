@@ -305,12 +305,12 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
 
   /* ---------------- execution ---------------- */
 
-  const runPlan = async () => {
+  const runPlan = async (startIndex = 0) => {
     if (!runId || deployRef.current) return;
     deployRef.current = true;
     setRunStatus("running");
     let failed = false;
-    for (let i = 0; i < planSteps.length; i++) {
+    for (let i = startIndex; i < planSteps.length; i++) {
       setActiveStep(i);
       setPlanSteps((prev) => prev.map((s, idx) => (idx === i ? { ...s, status: "running", output: [] } : s)));
       try {
@@ -915,11 +915,22 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
                   </motion.div>
                 )}
 
-                {runStatus === "failed" && (
-                  <div className="mt-4 rounded-xl border border-rose-400/25 bg-rose-400/[0.07] p-4 text-xs text-rose-100 leading-5">
-                    <b>استقرار در مرحله بالا متوقف شد.</b> خروجی اسکریپت را بررسی کنید؛ پس از رفع مشکل می‌توانید پلن را دوباره اجرا کنید.
-                  </div>
-                )}
+                {runStatus === "failed" && (() => {
+                  const failIdx = planSteps.findIndex((s) => s.status === "failed");
+                  return (
+                    <div className="mt-4 rounded-xl border border-rose-400/25 bg-rose-400/[0.07] p-4 text-xs text-rose-100 leading-5">
+                      <b>استقرار در مرحله بالا متوقف شد.</b> خروجی قرمز را بررسی کنید؛ مشکل سرور را رفع کنید و دوباره تلاش کنید — مراحل موفق تکرار نمی‌شوند و پلن نیازی به بازسازی ندارد.
+                      <button
+                        onClick={() => runPlan(Math.max(0, failIdx))}
+                        disabled={runStatus === "running"}
+                        className="mt-3 w-full h-10 rounded-xl bg-gradient-to-l from-amber-500 to-rose-500 text-white text-xs font-black shadow-lg shadow-rose-900/30 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-40"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                        تلاش دوباره از مرحلهٔ ناموفق
+                      </button>
+                    </div>
+                  );
+                })()}
 
                 {runStatus === "planned" && (
                   <div className="mt-4">
@@ -931,7 +942,7 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
                       </span>
                     </label>
                     <button
-                      onClick={runPlan}
+                      onClick={() => runPlan()}
                       disabled={!confirmed || runStatus === "running"}
                       className="mt-3 w-full h-11 rounded-xl bg-gradient-to-l from-emerald-600 to-teal-500 text-white text-sm font-black shadow-xl shadow-emerald-900/30 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                     >

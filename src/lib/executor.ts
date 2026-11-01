@@ -42,7 +42,7 @@ export async function executeStep(
   return new Promise((resolve) => {
     const proc = spawn(
       "powershell.exe",
-      ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", file],
+      ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", file],
       { windowsHide: true }
     );
     const output: string[] = [];
