@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, XCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, Loader2, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CheckResult } from "@/lib/types";
 
@@ -258,9 +258,17 @@ export function LiveConsole({
   maxHeight?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
   useEffect(() => {
     ref.current?.scrollTo({ top: ref.current.scrollHeight });
   }, [lines.length]);
+  const copyAll = () => {
+    try {
+      navigator.clipboard?.writeText(lines.join("\n"));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {}
+  };
   return (
     <div className="relative rounded-xl border border-white/10 bg-[#070b19]/90 overflow-hidden" dir="ltr">
       <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-white/[0.03]">
@@ -270,7 +278,19 @@ export function LiveConsole({
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/70" />
           <span className="text-[11px] text-muted-foreground ml-2">PowerShell — live output</span>
         </div>
-        {running && <Loader2 className="w-3.5 h-3.5 text-teal-300 animate-spin" />}
+        <div className="flex items-center gap-2">
+          {lines.length > 0 && (
+            <button
+              onClick={copyAll}
+              className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+              title="کپی کل خروجی برای ارسال به پشتیبانی"
+            >
+              {copied ? <Check className="w-3 h-3 text-emerald-300" /> : <Copy className="w-3 h-3" />}
+              {copied ? "کپی شد" : "کپی خروجی"}
+            </button>
+          )}
+          {running && <Loader2 className="w-3.5 h-3.5 text-teal-300 animate-spin" />}
+        </div>
       </div>
       <div ref={ref} className="terminal overflow-y-auto p-4" style={{ maxHeight }}>
         {lines.length === 0 && <div className="text-muted-foreground/50">در انتظار اجرای اسکریپت…</div>}

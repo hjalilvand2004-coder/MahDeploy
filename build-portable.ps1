@@ -65,6 +65,14 @@ Write-Host "[6/7] Downloading Windows Node.js runtime ($nodeVer) ..." -Foregroun
 $nodeExe = Join-Path $pkg "runtime\node.exe"
 Invoke-WebRequest -Uri "https://nodejs.org/dist/$nodeVer/win-x64/node.exe" -OutFile $nodeExe
 
+# WinSW wrapper for the panel's own Windows-service registration
+$winswExe = Join-Path $pkg "runtime\WinSW-x64.exe"
+if (-not (Test-Path $winswExe)) {
+    Write-Host "      Downloading WinSW v2.12.0 ..." -ForegroundColor Cyan
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri "https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW-x64.exe" -OutFile $winswExe
+}
+
 Write-Host "[7/7] Creating ZIP archive ..." -ForegroundColor Cyan
 $zip = Join-Path $dist "MahDeploy-Portable-Windows-x64-v$ver.zip"
 Compress-Archive -Path $pkg -DestinationPath $zip -CompressionLevel Optimal -Force

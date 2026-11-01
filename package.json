@@ -1,6 +1,6 @@
 {
   "name": "mahdeploy",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "description": "MahDeploy — Persian Windows deployment manager panel for FastAPI + React apps (portable, no Python/Node installation required)",
   "scripts": {

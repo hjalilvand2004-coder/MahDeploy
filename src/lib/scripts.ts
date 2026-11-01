@@ -181,6 +181,8 @@ export function generateWinSWXml(cfg: DeployConfig): string {
 const COMMON_PARAMS = (cfg: DeployConfig) => `
 param([switch]$Silent)
 $ErrorActionPreference = 'Stop'
+# clean fatal-error reporting: one red [FAIL] line instead of a raw PowerShell stack
+trap { Write-Host ("[FAIL] {0}" -f $_.Exception.Message) -ForegroundColor Red; ${STOP_TRANSCRIPT}; exit 1 }
 # keep console output UTF-8 so the panel reads every line correctly
 try { [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false) } catch {}
 ${cfgBlock(cfg)}
@@ -287,7 +289,7 @@ ${STOP_TRANSCRIPT}
 
 function script02(cfg: DeployConfig): string {
   return `${COMMON_PARAMS(cfg)}${BANNER("Prepare Folders & Source")}
-${ADMIN_CHECK}${transcriptBlock("C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-prepare.log")}
+${ADMIN_CHECK}${transcriptBlock(`C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-prepare.log`)}
 $dirs = @(
   $cfg.DeployPath,
   (Join-Path $cfg.DeployPath 'backend'),
@@ -300,7 +302,10 @@ $dirs = @(
   'C:\\ProgramData\\DeployGuard\\tools'
 )
 foreach ($d in $dirs) {
-  if (-not (Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
+  if (-not (Test-Path $d)) {
+    try { New-Item -ItemType Directory -Path $d -Force | Out-Null }
+    catch { throw ("could not create folder {0}: {1}" -f $d, $_.Exception.Message) }
+  }
   Write-Host ("[OK]   dir ready: {0}" -f $d)
 }
 
@@ -320,17 +325,51 @@ if ($cfg.SourceType -eq 'path') {
   } else { Write-Host "[WARN] no frontend folder - static site will be empty until first build" }
 } else {
   if (-not (Test-Path $cfg.SourcePath)) { throw "source ZIP not found: $($cfg.SourcePath) (the panel temp upload may have been cleaned - upload the ZIP again)" }
+
+  # clean up staging dirs left over from earlier runs (> 6h old)
+  Get-ChildItem $env:TEMP -Filter 'deployguard_*' -Directory -ErrorAction SilentlyContinue |
+    Where-Object { $_.CreationTime -lt (Get-Date).AddHours(-6) } |
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
   $stage = Join-Path $env:TEMP ("deployguard_{0}_{1}" -f $cfg.Name, (Get-Date -Format 'yyyyMMddHHmmss'))
   New-Item -ItemType Directory -Path $stage -Force | Out-Null
-  try { Expand-Archive -Path $cfg.SourcePath -DestinationPath $stage -Force }
-  catch { throw "extracting the ZIP failed: $($_.Exception.Message)" }
-  Write-Host "[OK]   archive extracted to staging"
-  $entries = @(Get-ChildItem $stage)
-  $inner = $entries | Where-Object { $_.PSIsContainer } | Select-Object -First 1
-  $rootDir = if ($entries.Count -eq 1 -and $inner -and (Test-Path (Join-Path $inner.FullName 'backend'))) { $inner.FullName } else { $stage }
+
+  # validate the archive up front for a clear error message
+  Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+  $zipEntries = 0
+  try {
+    $zip = [System.IO.Compression.ZipFile]::OpenRead($cfg.SourcePath)
+    $zipEntries = $zip.Entries.Count
+    $zip.Dispose()
+  } catch { $zipEntries = 0 }
+  if ($zipEntries -le 0) { throw "the uploaded file is not a readable ZIP archive: $($cfg.SourcePath) - re-upload the ZIP (the previous upload may have been truncated)" }
+
+  # prefer tar.exe (fast + no MAX_PATH limit on Windows 10 1803+ / Server 2019+)
+  $tarExe = Get-Command tar.exe -ErrorAction SilentlyContinue
+  if ($tarExe) {
+    $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+    & tar.exe -xf $cfg.SourcePath -C $stage 2>&1 | Out-Null
+    $tarExit = $LASTEXITCODE
+    $ErrorActionPreference = $prevEap
+    if ($tarExit -ne 0) { throw "tar.exe failed to extract the archive (exit $tarExit) - the ZIP may be corrupt; re-upload it" }
+    Write-Host ("[OK]   archive extracted ({0} entries, tar.exe)" -f $zipEntries)
+  } else {
+    try { Expand-Archive -Path $cfg.SourcePath -DestinationPath $stage -Force }
+    catch { throw "extracting the ZIP failed: $($_.Exception.Message)" }
+    Write-Host ("[OK]   archive extracted ({0} entries)" -f $zipEntries)
+  }
+
+  # locate the project root (handles wrapper folders at any depth)
+  $rootDir = $stage
+  for ($i = 0; $i -lt 5; $i++) {
+    if ((Test-Path (Join-Path $rootDir 'backend')) -or (Test-Path (Join-Path $rootDir 'frontend'))) { break }
+    $subDirs = @(Get-ChildItem $rootDir -Directory -ErrorAction SilentlyContinue)
+    $subFiles = @(Get-ChildItem $rootDir -File -ErrorAction SilentlyContinue)
+    if ($subDirs.Count -eq 1 -and $subFiles.Count -eq 0) { $rootDir = $subDirs[0].FullName } else { break }
+  }
   $srcBackend  = Join-Path $rootDir 'backend'
   $srcFrontend = Join-Path $rootDir 'frontend'
-  if (-not (Test-Path $srcBackend) -and -not (Test-Path $srcFrontend)) { throw "archive has no 'backend' or 'frontend' folder - expected FastAPI backend + React frontend structure" }
+  if (-not (Test-Path $srcBackend) -and -not (Test-Path $srcFrontend)) { throw "archive has no 'backend' or 'frontend' folder (looked in $rootDir) - expected FastAPI backend + React frontend structure" }
   if (Test-Path $srcBackend)  { robocopy $srcBackend  (Join-Path $cfg.DeployPath 'backend')  /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; if ($LASTEXITCODE -ge 8) { throw "robocopy backend failed with code $LASTEXITCODE" }; Write-Host "[OK]   backend copied from archive" }
   if (Test-Path $srcFrontend) { robocopy $srcFrontend (Join-Path $cfg.DeployPath 'frontend') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; if ($LASTEXITCODE -ge 8) { throw "robocopy frontend failed with code $LASTEXITCODE" }; Write-Host "[OK]   frontend copied from archive" }
   Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
@@ -345,8 +384,8 @@ PORT=${cfg.backendPort}
 ENV=production
 GENERATED_AT=$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 "@
-Set-Content -Path $envFile -Value $envContent -Encoding UTF8
-Write-Host "[OK]   backend\\.env written"
+[System.IO.File]::WriteAllText($envFile, $envContent, (New-Object System.Text.UTF8Encoding($false)))
+Write-Host "[OK]   backend\\.env written (UTF-8, no BOM)"
 
 Write-Host "[RESULT] Preparation completed." -ForegroundColor Green
 ${STOP_TRANSCRIPT}
@@ -355,7 +394,7 @@ ${STOP_TRANSCRIPT}
 
 function script03(cfg: DeployConfig): string {
   return `${COMMON_PARAMS(cfg)}${BANNER("Backend :: venv + WinSW Service")}
-${ADMIN_CHECK}${transcriptBlock("C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-backend.log")}
+${ADMIN_CHECK}${transcriptBlock(`C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-backend.log`)}
 $backendDir = Join-Path $cfg.DeployPath 'backend'
 Push-Location $backendDir
 
@@ -432,7 +471,7 @@ ${STOP_TRANSCRIPT}
 
 function script04(cfg: DeployConfig): string {
   return `${COMMON_PARAMS(cfg)}${BANNER("Frontend :: Build & Publish")}
-${ADMIN_CHECK}${transcriptBlock("C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-frontend.log")}
+${ADMIN_CHECK}${transcriptBlock(`C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-frontend.log`)}
 $frontendDir = Join-Path $cfg.DeployPath 'frontend'
 if (-not (Test-Path (Join-Path $frontendDir 'package.json'))) {
   Write-Host "[WARN] no package.json in frontend - skipping build (static site stays as-is)"
@@ -474,7 +513,7 @@ function script05(cfg: DeployConfig): string {
     .map((l) => l.replace(/\r$/, ""))
     .join("\n");
   return `${COMMON_PARAMS(cfg)}${BANNER("Nginx :: Site Configuration & Reload")}
-${ADMIN_CHECK}${transcriptBlock("C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-nginx.log")}
+${ADMIN_CHECK}${transcriptBlock(`C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-nginx.log`)}
 $nginxExe  = Join-Path $cfg.NginxPath 'nginx.exe'
 if (-not (Test-Path $nginxExe)) { throw "nginx.exe not found at $nginxExe" }
 
