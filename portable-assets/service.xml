@@ -1,0 +1,30 @@
+<!--
+  MahDeploy Windows Service definition (WinSW v2)
+  Used by service-install.ps1 — registers the panel as an
+  Automatic Windows service that starts with the server boot.
+-->
+<service>
+  <id>MahDeployPanel</id>
+  <name>MahDeploy Panel</name>
+  <description>MahDeploy (استقراربان) — portable deployment panel for FastAPI + React apps on Windows. http://localhost:3000</description>
+
+  <executable>%BASE%\runtime\node.exe</executable>
+  <arguments>app\mahdeploy.js</arguments>
+  <workingdirectory>%BASE%\app</workingdirectory>
+
+  <env name="MAHDEPLOY_ROOT" value="%BASE%"/>
+  <env name="NODE_ENV" value="production"/>
+  <env name="PORT" value="3000"/>
+
+  <logpath>%BASE%\logs</logpath>
+  <log mode="roll-by-size">
+    <sizeThreshold>10240</sizeThreshold>
+    <keepFiles>8</keepFiles>
+  </log>
+
+  <onfailure action="restart" delay="10 sec"/>
+  <onfailure action="restart" delay="20 sec"/>
+  <onfailure action="none"/>
+
+  <startmode>Automatic</startmode>
+</service>

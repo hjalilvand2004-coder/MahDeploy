@@ -1,0 +1,60 @@
+generator client {
+  provider        = "prisma-client-js"
+  // "windows" engine is bundled so the portable Windows build works out of the box
+  binaryTargets   = ["native", "windows"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Deployment {
+  id             String    @id @default(cuid())
+  name           String    @unique
+  displayName    String
+  domain         String
+  backendPort    Int
+  sourceType     String
+  sourcePath     String?
+  deployBase     String
+  deployPath     String
+  sslCertPath    String
+  sslKeyPath     String
+  nginxPath      String
+  status         String    @default("planned")
+  statusDetail   String?
+  lastDeployedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  logs           LogEntry[]
+  runs           DeployRun[]
+}
+
+model LogEntry {
+  id           String     @id @default(cuid())
+  deploymentId String?
+  deployment   Deployment? @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  level        String
+  step         String
+  message      String
+  createdAt    DateTime   @default(now())
+}
+
+model DeployRun {
+  id           String     @id @default(cuid())
+  deploymentId String
+  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  kind         String     @default("deploy")
+  scripts      String
+  steps        String     @default("[]")
+  status       String     @default("planned")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
