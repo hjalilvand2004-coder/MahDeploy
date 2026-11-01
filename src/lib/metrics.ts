@@ -179,6 +179,23 @@ export async function getServerStatus(): Promise<ServerStatus> {
 }
 
 /* ------------------------------ Ports ----------------------------------- */
+/** Quick live check: is anything accepting TCP connections on this port?
+ *  Used by the service-control list to detect drift between the saved
+ *  status and the real state of the machine. */
+export async function probePortListening(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const sock = net.connect({ port, host: "127.0.0.1" });
+    const done = (v: boolean) => {
+      sock.destroy();
+      resolve(v);
+    };
+    sock.setTimeout(700);
+    sock.once("timeout", () => done(false));
+    sock.once("error", () => done(false));
+    sock.once("connect", () => done(true));
+  });
+}
+
 export async function isPortFree(port: number): Promise<{ free: boolean; owner?: string }> {
   if (!SIMULATION) {
     const out = await run(
@@ -210,7 +227,7 @@ const SIM_PORTS: PortUsage[] = [
 ];
 
 export async function getPortUsage(
-  deployments: { name: string; domain: string; backendPort: number; status: string }[]
+  deployments: { name: string; displayName?: string; domain: string; backendPort: number; status: string }[]
 ): Promise<PortUsage[]> {
   const result: PortUsage[] = [];
   if (!SIMULATION) {
@@ -234,7 +251,7 @@ export async function getPortUsage(
     const existing = byPort.get(d.backendPort);
     if (existing) {
       existing.source = "deployment";
-      existing.deploymentName = d.displayName;
+      existing.deploymentName = d.displayName ?? d.name;
       existing.deploymentDomain = d.domain;
       existing.process = d.status === "active" ? `${d.name}-service.exe` : existing.process;
     } else {
@@ -243,7 +260,7 @@ export async function getPortUsage(
         pid: null,
         process: `${d.name}-service.exe`,
         source: "deployment",
-        deploymentName: d.displayName,
+        deploymentName: d.displayName ?? d.name,
         deploymentDomain: d.domain,
       });
     }

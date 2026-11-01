@@ -17,6 +17,7 @@ export async function GET() {
   const ports = await getPortUsage(
     deployments.map((d) => ({
       name: d.name,
+      displayName: d.displayName,
       domain: d.domain,
       backendPort: d.backendPort,
       status: d.status,

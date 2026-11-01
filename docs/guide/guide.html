@@ -255,7 +255,7 @@ tr{break-inside:avoid;}
     <div class="glow2"></div>
   </div>
   <div class="content">
-    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.1.0</div>
+    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.2.0</div>
     <div class="brand">
       <div class="fa-name">استقرار<em>بان</em></div>
       <div class="latin">MahDeploy — FastAPI + React Deployer for Windows Server</div>
@@ -267,7 +267,7 @@ tr{break-inside:avoid;}
       همه در یک پنل فارسی و شیشه‌ای. این راهنما گام‌به‌گام تمام بخش‌های سامانه را توضیح می‌دهد.
     </div>
     <div class="meta">
-      <span class="pill">نسخه سند: <b>۱.۱.۰</b></span>
+      <span class="pill">نسخه سند: <b>۱.۲.۰</b></span>
       <span class="pill">تاریخ انتشار: <b>آبان ۱۴۰۵</b></span>
       <span class="pill">مخاطب: <b>مدیران سرور و تیم‌های فنی</b></span>
       <span class="pill">سیستم‌عامل: <b>Windows Server 2016+</b></span>
@@ -290,7 +290,7 @@ tr{break-inside:avoid;}
   <div class="row"><span class="num">۲</span><span class="t"><span class="tt">اجرا و راه‌اندازی</span><br><span class="ts">اجرای پکیج پرتابل، ثبت سرویس ویندوز و نخستین ورود</span></span><span class="pg" id="toc-ch2">۲</span></div>
   <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۳</span></div>
   <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۴</span></div>
-  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">شروع/توقف/ری‌استارت، جزئیات، اسکریپت‌ها و حذف کامل</span></span><span class="pg" id="toc-ch5">۵</span></div>
+  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">کنترل سریع سرویس‌ها، شروع/توقف/ری‌استارت، جزئیات و حذف کامل</span></span><span class="pg" id="toc-ch5">۵</span></div>
   <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۶</span></div>
   <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل</span></span><span class="pg" id="toc-ch7">۷</span></div>
 
@@ -462,14 +462,15 @@ tr{break-inside:avoid;}
   <div class="chapter-header" id="ch5">
     <span class="ch-tag">CHAPTER 05</span>
     <h2>مدیریت سامانه‌های مستقرشده</h2>
-    <p class="lead">چرخه حیات سامانه‌ها پس از استقرار: وضعیت، عملیات سرویس، جزئیات فنی و حذف کامل.</p>
+    <p class="lead">چرخه حیات سامانه‌ها پس از استقرار: کنترل سریع سرویس‌ها، وضعیت، عملیات سرویس، جزئیات فنی و حذف کامل.</p>
     <div class="divider"></div>
   </div>
 
   <p class="body-text">
     تب «سامانه‌ها» برای هر استقرار یک کارت می‌سازد: نام نمایشی و دامنه، پورت بک‌اند، مسیر پوشه استقرار، زمان آخرین
     استقرار و نشان وضعیت. چهار دکمه پایین هر کارت، کل چرخه حیات را پوشش می‌دهند و دکمه «راهنمای مدیریت سامانه‌ها»
-    در بالای همین صفحه، معادل داخل‌پنلیِ این فصل است.
+    در بالای همین صفحه، معادل داخل‌پنلیِ این فصل است. اگر فقط به خاموش‌وروشن‌کردن سرویس‌ها نیاز دارید، تب «سرویس‌ها»
+    همان کار را با ظاهری ساده‌تر انجام می‌دهد.
   </p>
 
   <table>
@@ -481,6 +482,20 @@ tr{break-inside:avoid;}
       <tr><td><b style="color:#FCD34D;">در حال استقرار</b></td><td>عملیات استقرار در جریان است</td><td>صبر کنید تا مراحل کامل شوند</td></tr>
     </tbody>
   </table>
+
+  <p class="body-text">
+    تب «سرویس‌ها» ساده‌ترین جای پنل برای مدیریت روزمره است: فهرست همهٔ سامانه‌های مستقرشده با پورت بک‌اند و وضعیت
+    زندهٔ هر کدام، همراه سه دکمه Start، Stop و Restart در همان ردیف. نشان سبز «روی پورت پاسخ می‌دهد» یعنی همین لحظه
+    پردازشی روی آن پورت در حال شنیدن است؛ نشان قرمز «پورت بی‌پاسخ» یعنی سرویس ظاهراً بالا نیست. وضعیت پورت‌ها هر ۵
+    ثانیه به‌طور خودکار تازه می‌شود و دکمه بازآوری برای بررسی فوری هست. فقط سرویس‌های سامانه‌های مستقرشده با
+    استقراربان از این‌جا کنترل می‌شوند و سرویس‌های سیستمی ویندوز دست‌نخورده می‌مانند؛ دکمه لینک، سامانه را در
+    مرورگر باز می‌کند و دکمه چشم به تب «سامانه‌ها» برای کارهای تکمیلی می‌رود.
+  </p>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>Start / Stop / Restart</h4><p>Start سرویس متوقف را روشن می‌کند، Stop سرویس فعال را می‌ایستاند و Restart یک‌باره خاموش‌وروشن می‌کند (برای اعمال تغییرات کد بک‌اند). نتیجه با اعلان اعلام و فهرست بلافاصله تازه می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>کدام تب، برای کدام کار؟</h4><p>برای روشن/خاموش/ری‌استارت روزمره، تب «سرویس‌ها» سریع‌ترین راه است؛ برای دیدن خروجی استقرار، اسکریپت‌ها، کانفیگ Nginx، رویدادها و حذف کامل، به تب «سامانه‌ها» بروید.</p></div>
+  </div>
 
   <div class="grid2">
     <div class="card"><h4><span class="dot"></span>شروع / توقف / ری‌استارت</h4><p>سه دکمه کنار کارت، سرویس ویندوز <span class="inline-code">deployguard-&lt;name&gt;</span> را مدیریت می‌کنند و نتیجه با اعلان (Toast) اعلام می‌شود. ری‌استارت برای اعمال تغییرات کد بک‌اند کافی است.</p></div>
@@ -526,6 +541,20 @@ tr{break-inside:avoid;}
     </tbody>
   </table>
 
+  <div class="chapter-header" id="ch7-check" style="margin-top:18px;">
+    <span class="ch-tag">CHECKLIST</span>
+    <h2 style="font-size:20px;">پیش از هر استقرار، این ۴ مورد را چک کنید</h2>
+    <p class="lead">سی ثانیه بازبینی، از یک ساعت عیب‌یابی بهتر است. پس از استقرار هم نشان سبز پورت را در تب «سرویس‌ها» و نتیجه ۶ اسکریپت را در «سامانه‌ها ← جزئیات» مرور کنید.</p>
+    <div class="divider"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>۱ — سلامت سرور</h4><p>در داشبورد، CPU و رم و دیسک سبز باشند، Nginx فعال باشد و فضای کافی دیسک موجود باشد.</p></div>
+    <div class="card"><h4><span class="dot"></span>۲ — دامنه و پورت</h4><p>رکورد A دامنه به IP همین سرور اشاره می‌کند و پورت بک‌اند آزاد است — هر دو بررسی مرحله ۲ ویزارد سبز باشند.</p></div>
+    <div class="card"><h4><span class="dot"></span>۳ — گواهی SSL</h4><p>فایل‌های گواهی و کلید در سرور کپی شده‌اند و «اعتبارسنجی گواهی SSL» بدون خطا تأیید می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>۴ — دسترسی Administrator</h4><p>پنل با دسترسی مدیر اجرا شده باشد تا اسکریپت‌ها، سرویس ویندوز و فایروال واقعاً اعمال شوند؛ وگرنه همه‌چیز فقط شبیه‌سازی می‌شود.</p></div>
+  </div>
+
 
 </div>
 
@@ -537,7 +566,7 @@ tr{break-inside:avoid;}
   </div>
   <div class="content">
     <div class="brand-sm">استقرار<em>بان</em></div>
-    <div class="latin">MAHDEPLOY V1.1.0</div>
+    <div class="latin">MAHDEPLOY V1.2.0</div>
     <p class="tagline">
       از پیش‌بررسی تا ترمینال زنده — استقرار استاندارد FastAPI + React روی ویندوز سرور،
       بدون نصب هیچ پیش‌نیازی، با رابط فارسی و گزارش شفاف PowerShell.
@@ -548,7 +577,7 @@ tr{break-inside:avoid;}
       <span class="pill">۳ · مدیریت سامانه‌ها</span>
     </div>
     <div class="meta-line">
-      سند رسمی راهنمای کاربر — نسخه ۱.۱.۰ — آبان ۱۴۰۵<br>
+      سند رسمی راهنمای کاربر — نسخه ۱.۲.۰ — آبان ۱۴۰۵<br>
       <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
     </div>
     <div class="rule"></div>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Rocket, LayoutDashboard, Boxes, Rocket as RocketIcon, Settings, LogOut,
-  KeyRound, Loader2, X, FlaskConical, MonitorCog,
+  KeyRound, Loader2, X, FlaskConical, MonitorCog, Power,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,12 @@ import { LoginScreen } from "@/components/deployer/login";
 import { DashboardTab } from "@/components/deployer/dashboard";
 import { DeployWizard } from "@/components/deployer/wizard";
 import { SystemsTab } from "@/components/deployer/systems";
+import { ServicesTab } from "@/components/deployer/services";
 import { HeaderHelpButton } from "@/components/deployer/help";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { PortUsage, ServerStatus } from "@/lib/types";
 
-type Tab = "dashboard" | "deploy" | "systems";
+type Tab = "dashboard" | "deploy" | "services" | "systems";
 
 interface DeployRow {
   id: string; name: string; displayName: string; domain: string;
@@ -179,6 +180,7 @@ export default function Home() {
   const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "dashboard", label: "داشبورد سرور", icon: LayoutDashboard },
     { id: "deploy", label: "استقرار جدید", icon: RocketIcon },
+    { id: "services", label: "سرویس‌ها", icon: Power },
     { id: "systems", label: "سامانه‌ها", icon: Boxes },
   ];
 
@@ -299,6 +301,7 @@ export default function Home() {
           />
         )}
         {tab === "deploy" && <DeployWizard simulation={mode === "simulation"} onDeployed={refreshAll} />}
+        {tab === "services" && <ServicesTab onGoSystems={() => setTab("systems")} />}
         {tab === "systems" && <SystemsTab refreshKey={systemsKey} />}
       </main>
 
