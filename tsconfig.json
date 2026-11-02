@@ -40,6 +40,8 @@
     "node_modules",
     "skills",
     "portable",
-    "tool-results"
+    "tool-results",
+    "examples",
+    "agent-ctx"
   ]
 }
