@@ -186,6 +186,7 @@ p{margin:0;}
 .ch-a5{--ch-rgb:110,231,183;--ch2-rgb:125,211,252;}  /* سبز */
 .ch-a6{--ch-rgb:252,211,77; --ch2-rgb:251,113,133;}  /* کهربایی */
 .ch-a7{--ch-rgb:251,113,133;--ch2-rgb:252,211,77;}   /* سرخابی */
+.ch-a8{--ch-rgb:129,140,248;--ch2-rgb:45,212,191;}   /* نیلی — مرجع اسکریپت‌ها */
 #ch7-check{break-before:auto;--ch-rgb:203,213,225;--ch2-rgb:125,211,252;} /* چک‌لیست — خنثی */
 #ch7-check .ch-num{font-size:72px;}
 
@@ -302,7 +303,7 @@ tr{break-inside:avoid;}
     <div class="glow2"></div>
   </div>
   <div class="content">
-    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.3.0</div>
+    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.3.1</div>
     <div class="brand">
       <div class="fa-name">استقرار<em>بان</em></div>
       <div class="latin">MahDeploy — FastAPI + React Deployer for Windows Server</div>
@@ -312,10 +313,12 @@ tr{break-inside:avoid;}
       استقرار استاندارد و خودکار اپلیکیشن‌های FastAPI + React روی ویندوز سرور؛ با پیش‌بررسی کامل
       دامنه، پورت و گواهی SSL، اسکریپت‌های استاندارد PowerShell، وب‌سرور Nginx و سرویس ویندوز.
       در نسخه ۱.۳.۰ سه قابلیت بزرگ اضافه شده است: گزارش دقیق خطا با علت و راه‌حل پیشنهادی،
-      بررسی سلامت چندسطحی سامانه‌های مستقرشده و به‌روزرسانی با نسخه‌بندی + بازگشت سریع به نسخهٔ سالم.
+      بررسی سلامت چندسطحی سامانه‌های مستقرشده و به‌روزرسانی با نسخه‌بندی + بازگشت سریع به نسخهٔ سالم؛
+      و نسخهٔ ۱.۳.۱ تشخیص هوشمند تداخل پورت بک‌اند (شناسایی پردازش اشغال‌کننده با دستور توقف دقیق)
+      و رفع چند خطای اسکریپتی را اضافه می‌کند. فصل ۵ این سند، مرجع کامل اسکریپت‌های PowerShell است.
     </div>
     <div class="meta">
-      <span class="pill">نسخه سند: <b>۱.۳.۰</b></span>
+      <span class="pill">نسخه سند: <b>۱.۳.۱</b></span>
       <span class="pill">تاریخ انتشار: <b>آبان ۱۴۰۵</b></span>
       <span class="pill">مخاطب: <b>مدیران سرور و تیم‌های فنی</b></span>
       <span class="pill">سیستم‌عامل: <b>Windows Server 2016+</b></span>
@@ -338,19 +341,21 @@ tr{break-inside:avoid;}
 <div class="toc">
   <div class="head-tag">TABLE OF CONTENTS</div>
   <h2>فهرست مطالب</h2>
-  <p class="sub">هفت فصل، از آشنایی با سامانه تا عیب‌یابی — هر بخش با همان زبانی که در خود پنل می‌بینید.</p>
+  <p class="sub">هشت فصل، از آشنایی با سامانه تا مرجع کامل اسکریپت‌ها و عیب‌یابی — هر بخش با همان زبانی که در خود پنل می‌بینید.</p>
 
   <div class="row"><span class="num">۱</span><span class="t"><span class="tt">آشنایی با استقراربان</span><br><span class="ts">چرا این سامانه؟ معماری، امکانات کلیدی و جریان کار</span></span><span class="pg" id="toc-ch1">۳</span></div>
   <div class="row"><span class="num">۲</span><span class="t"><span class="tt">اجرا و راه‌اندازی</span><br><span class="ts">اجرای پکیج پرتابل، ثبت سرویس ویندوز و نخستین ورود</span></span><span class="pg" id="toc-ch2">۴</span></div>
   <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۵</span></div>
   <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۶</span></div>
-  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch5">۸</span></div>
-  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۱۰</span></div>
-  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch7">۱۱</span></div>
+  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">الگوهای اسکریپت‌های PowerShell</span><br><span class="ts">ترتیب اجرا، نام مرحلهٔ هر اسکریپت و دقیقاً چه کاری روی سرور انجام می‌دهد</span></span><span class="pg" id="toc-ch5">۸</span></div>
+  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch6">۱۳</span></div>
+  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch7">۱۵</span></div>
+  <div class="row"><span class="num">۸</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch8">۱۶</span></div>
 
   <p class="note">
     در خود پنل نیز هر صفحه دکمه «راهنما» دارد که توضیح همان بخش را همین‌جا و بدون خروج از پنل نمایش می‌دهد؛
-    این سند نسخه کامل و مصور همان راهنماست. برای مرور سریع، کافی است فصل ۲ را بخوانید و سپس مستقیم سراغ فصل ۴ بروید.
+    این سند نسخه کامل و مصور همان راهنماست. برای مرور سریع، کافی است فصل ۲ را بخوانید و سپس مستقیم سراغ فصل ۴ بروید؛
+    فهرست کامل اسکریپت‌های PowerShell و کاری که دقیقاً انجام می‌دهند، فصل ۵ است.
   </p>
 </div>
 
@@ -499,7 +504,8 @@ tr{break-inside:avoid;}
 
   <p class="body-text">
     وقتی همه موارد سبز شد، دکمه <b>«تولید پلن PowerShell استقرار»</b> فعال می‌شود. پلن یعنی ۶ اسکریپت استاندارد که
-    به‌ترتیب اجرا خواهند شد — و پیش از اجرا، محتوای کامل هرکدام قابل مشاهده، کپی و دانلود است:
+    به‌ترتیب اجرا خواهند شد — و پیش از اجرا، محتوای کامل هرکدام قابل مشاهده، کپی و دانلود است (شرح دقیق و کامل هر
+    شش اسکریپت، به‌همراه اسکریپت‌های مدیریتی و به‌روزرسانی، در فصل ۵ آمده است):
   </p>
 
   <table>
@@ -528,10 +534,133 @@ tr{break-inside:avoid;}
 
   <div class="callout ok"><b>فلسفه استقراربان:</b> تا همه بررسی‌ها سبز نشوند هیچ خطی روی سرور اجرا نمی‌شود؛ و پیش از اجرا هم همه‌چیز با چشم خودتان قابل بازبینی است.</div>
 
-  <!-- ═══════ فصل ۵ ═══════ -->
-  <div class="chapter-header ch-a5" id="ch5">
+  <!-- ═══════ فصل ۵ — مرجع اسکریپت‌ها ═══════ -->
+  <div class="chapter-header ch-a8" id="ch5">
     <span class="ch-num">۰۵</span>
     <span class="ch-tag">CHAPTER 05</span>
+    <h2>الگوهای اسکریپت‌های PowerShell — مرجع کامل</h2>
+    <p class="lead">هر پلن استقراربان از کدام اسکریپت‌ها ساخته شده، به چه ترتیبی اجرا می‌شود و هر کدام دقیقاً چه کاری روی سرور انجام می‌دهد.</p>
+    <div class="divider"></div>
+  </div>
+
+  <p class="body-text">
+    پنل هیچ دستور پنهانی روی سرور اجرا نمی‌کند؛ برای هر سامانه و از روی همان مقادیری که در ویزارد وارد کرده‌اید
+    (نام، دامنه، پورت، مسیرها، گواهی SSL و ...) اسکریپت‌های استاندارد PowerShell تولید می‌شوند. این اسکریپت‌ها پیش از
+    اجرا در گام «تولید پلن» قابل مشاهده، کپی و دانلود هستند، روی سرور در پوشهٔ <span class="inline-code">scripts\</span> همان سامانه
+    ذخیره می‌شوند و به‌ترتیبِ همین فصل با دسترسی Administrator اجرا می‌گردند. متن کامل هر اسکریپت در هر لحظه از تب
+    «اسکریپت‌های PowerShell» در پنجرهٔ جزئیات سامانه هم در دسترس است.
+  </p>
+
+  <p class="body-text">
+    همهٔ اسکریپت‌های استقرار، به‌روزرسانی، سلامت و نگهداری یک <b>اسکلت مشترک</b> دارند که رفتار یکنواخت گزارش خطا و
+    لاگ‌گیری را تضمین می‌کند: بلوک تنظیمات <span class="inline-code">$cfg</span>، کنترل دسترسی Administrator، گزارش خطای تک‌خطی
+    به‌جای stack trace خام، خروجی UTF-8 و ترنسکریپت کامل مرحله:
+  </p>
+
+  <div class="codeblock">
+    <div class="cb-head">common skeleton — identical in every generated script</div>
+    <pre>param([switch]$Silent)
+$ErrorActionPreference = 'Stop'
+trap {                    <span class="c"># clean one-line error report, not a raw stack trace</span>
+  Write-Host ("[FAIL] {0}" -f $_.Exception.Message) -ForegroundColor Red
+  Write-Host "[HINT] log file: ...  |  press Retry - successful steps are not repeated"
+  exit 1
+}
+[Console]::OutputEncoding = UTF8      <span class="c"># safe unicode output for the panel</span>
+$cfg = [ordered]@{ Name='...'; DisplayName='...'; Domain='...'; BackendPort=8083;
+                  SourceType='zip'; SourcePath='...'; DeployPath='...';
+                  SslCertPath='...'; SslKeyPath='...'; NginxPath='...'; ... }
+<span class="g"># Administrator check  -> if not elevated: [FAIL] + exit 1</span>
+<span class="g"># Start-Transcript     -> C:\ProgramData\DeployGuard\logs\&lt;name&gt;-&lt;stage&gt;.log</span></pre>
+  </div>
+
+  <p class="body-text">
+    همهٔ اسکریپت‌ها با چهار برچسب رنگی استاندارد صحبت می‌کنند: سبز <span class="inline-code">[OK]</span>، زرد
+    <span class="inline-code">[WARN]</span> (مانع ادامه نیست)، قرمز <span class="inline-code">[FAIL]</span> (توقف فوری با exit 1) و
+    جمع‌بندی <span class="inline-code">[RESULT]</span>. اسکریپت سلامت هم خطوط <span class="inline-code">[CHECK]</span> می‌دهد که پنل آن‌ها را
+    به گزارش رنگی چندسطحی تبدیل می‌کند. هر [FAIL] با [HINT] همراه است: مسیر فایل ترنسکریپت + یادآوری دکمهٔ «تلاش
+    دوباره»؛ و چون اسکریپت‌ها idempotent نوشته شده‌اند، در اجرای مجدد فقط مراحل باقی‌مانده اجرا می‌شوند، نه از صفر.
+  </p>
+
+  <h3 style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">شش اسکریپت استقرار — به ترتیب اجرا</h3>
+  <p class="body-text">نام فایل و نام مرحله در پنل (ستون کناری هنگام اجرا) و کاری که هر اسکریپت دقیقاً انجام می‌دهد:</p>
+
+  <div class="step-row"><span class="n">۱</span><div class="t"><div class="tt"><span class="inline-code">01-Preflight.ps1</span> — بررسی‌های پیش‌نیاز</div><div class="tx">هفت کنترل لحظهٔ اجرا: <b>۱) آزاد بودن پورت بک‌اند</b> — اگر اشغال باشد، صاحب پورت با نام پردازش، PID و مسیر فایل اجرایی شناسایی و با استعلام Win32_Service مشخص می‌شود سرویس ویندوز است یا نه؛ اگر سرویسِ خودِ همین سامانه باشد (حالت استقرار مجدد/به‌روزرسانی) فقط هشدار زرد می‌دهد و ادامه می‌دهد، اما پردازش بیگانه یعنی [FAIL] همراه با نام پردازش و دستور دقیق توقف (<span class="inline-code">Stop-Service</span> یا <span class="inline-code">Stop-Process -Id</span>)؛ <b>۲)</b> وجود فایل گواهی SSL؛ <b>۳)</b> وجود کلید خصوصی؛ <b>۴)</b> وجود <span class="inline-code">nginx.exe</span> و نسخهٔ آن؛ <b>۵)</b> در دسترس بودن Python و Node.js در PATH با نمایش نسخه؛ <b>۶)</b> رزولوشن DNS دامنه و هشدار اگر IP نتیجه با IP کارت‌های شبکه سرور یکی نباشد؛ <b>۷)</b> وجود منبع کد (مسیر یا ZIP) و آماده بودن درایو مقصد — پوشهٔ والد مسیر استقرار در صورت نبود خودکار ساخته می‌شود. حتی یک [FAIL] یعنی توقف کل پلن پیش از هر تغییری روی سرور.</div></div></div>
+
+  <div class="step-row"><span class="n">۲</span><div class="t"><div class="tt"><span class="inline-code">02-Prepare.ps1</span> — آماده‌سازی پوشه‌ها و کد</div><div class="tx">ابتدا ساختار پوشهٔ استاندارد را می‌سازد: <span class="inline-code">backend</span>، <span class="inline-code">frontend</span>، <span class="inline-code">www</span>، <span class="inline-code">logs</span>، <span class="inline-code">service</span>، <span class="inline-code">nginx</span> و <span class="inline-code">scripts</span> در مسیر استقرار + پوشهٔ ابزار <span class="inline-code">C:\ProgramData\DeployGuard\tools</span>. سپس منبع کد را سر جای خود می‌برد: در حالت «مسیر» با <span class="inline-code">robocopy /MIR</span> از backend و frontend کپی می‌کند؛ در حالت «ZIP» ابتدا سالم بودن آرشیو را کنترل می‌کند (شمارش entryها)، پوشه‌های موقت قدیمی‌تر از ۶ ساعت را پاک می‌کند، با <span class="inline-code">tar.exe</span> (یا Expand-Archive) استخراج می‌کند، ریشهٔ پروژه را حتی درون پوشه‌های تودرتوی ZIP (تا ۵ سطح) پیدا می‌کند و بعد robocopy می‌زند. در پایان فایل <span class="inline-code">backend\.env</span> را با UTF-8 بدون BOM می‌نویسد: APP_NAME، APP_DOMAIN، PORT و ENV=production.</div></div></div>
+
+  <div class="step-row"><span class="n">۳</span><div class="t"><div class="tt"><span class="inline-code">03-Backend.ps1</span> — استقرار بک‌اند FastAPI</div><div class="tx">چهار کار: <b>۱)</b> ساخت محیط مجازی <span class="inline-code">.venv</span> با <span class="inline-code">python -m venv</span> (اگر از قبل نباشد)؛ <b>۲)</b> نصب وابستگی‌ها — ارتقای pip و اجرای <span class="inline-code">pip install -r requirements.txt</span>؛ نبودِ requirements.txt یعنی فقط uvicorn نصب می‌شود با هشدار؛ <b>۳)</b> آماده‌سازی سرویس ویندوز: اگر <span class="inline-code">WinSW-x64.exe</span> در پوشهٔ ابزار نباشد نسخهٔ 2.12.0 دانلود می‌شود، به <span class="inline-code">service\&lt;name&gt;-service.exe</span> کپی و فایل تعریف سرویس <span class="inline-code">&lt;name&gt;-service.xml</span> نوشته می‌شود (اجرای uvicorn روی پورت بک‌اند، استارت خودکار، ری‌استارت خودکار پس از خطا با تأخیر ۵ و ۱۰ ثانیه)؛ <b>۴)</b> نصب و استارت سرویس — سرویس قبلی هم‌نام ابتدا توقف و حذف می‌شود — و سپس حداکثر ۹۰ ثانیه منتظر پاسخ پورت می‌ماند؛ نشدن = خطا با ارجاع به لاگ‌های wrapper.</div></div></div>
+
+  <div class="step-row"><span class="n">۴</span><div class="t"><div class="tt"><span class="inline-code">04-Frontend.ps1</span> — ساخت فرانت‌اند React</div><div class="tx">اگر <span class="inline-code">frontend\package.json</span> وجود نداشته باشد با هشدار خارج می‌شود و سایت فعلی دست‌نخورده می‌ماند. وگرنه: <span class="inline-code">npm ci</span> (وقتی package-lock.json هست) یا <span class="inline-code">npm install</span>، سپس <span class="inline-code">npm run build</span>؛ پیدا نشدن خروجی <span class="inline-code">dist</span> یا <span class="inline-code">build</span> یعنی خطا. در پایان محتوای <span class="inline-code">www</span> را خالی و خروجی production build را با robocopy /MIR داخل آن منتشر می‌کند — همان پوشه‌ای که Nginx سرو می‌کند.</div></div></div>
+
+  <div class="step-row"><span class="n">۵</span><div class="t"><div class="tt"><span class="inline-code">05-Nginx.ps1</span> — پیکربندی Nginx و SSL</div><div class="tx">شش کار به‌ترتیب: <b>۱)</b> گرفتن قفل سراسری <span class="inline-code">C:\ProgramData\DeployGuard\nginx.lock</span> تا دو استقرار هم‌زمان کانفیگ مشترک را خراب نکنند (قفل یتیمِ قدیمی‌تر از ۱۰ دقیقه خودکار حذف و حداکثر ۶۰ ثانیه برای آزادشدن منتظر می‌ماند)؛ <b>۲)</b> کنترل <span class="inline-code">nginx.conf</span> برای وجود <span class="inline-code">include conf.d/*.conf</span> و map وب‌سوکت و افزودن آن‌ها با بکاپ در صورت نبود؛ <b>۳)</b> اعتبارسنجی عمیق گواهی: خوانایی، انقضا (منقضی = خطا؛ کمتر از ۱۴ روز = هشدار)، تطابق CN/SAN با دامنه (نامتطابق = هشدار)، تک‌گواهی بودن بدون زنجیرهٔ میانی (هشدار) و تطابق modulus کلید و گواهی با openssl (نامتطابق = خطا)؛ <b>۴)</b> بکاپ کانفیگ قبلی دامنه با timestamp در <span class="inline-code">nginx-backups</span> و نوشتن <span class="inline-code">conf.d\&lt;name&gt;.conf</span>؛ <b>۵)</b> ساخت قواعد فایروال TCP 80 و 443 با نام DeployGuard HTTP؛ <b>۶)</b> تست با <span class="inline-code">nginx -t</span> — رد شدن یعنی بازگردانی خودکار کانفیگ قبلی و نمایش خطا با متن خطوط emerg — و در پایان reload اگر Nginx روشن است، وگرنه استارت آن.</div></div></div>
+
+  <div class="step-row"><span class="n">۶</span><div class="t"><div class="tt"><span class="inline-code">06-Verify.ps1</span> — اعتبارسنجی نهایی</div><div class="tx">بدون تغییر دادن چیزی فقط تأیید می‌کند: وضعیت سرویس <span class="inline-code">deployguard-&lt;name&gt;</span> باید Running باشد؛ پورت بک‌اند روی 127.0.0.1 باید پاسخ دهد (Test-NetConnection)؛ پروب HTTP بک‌اند روی <span class="inline-code">/docs</span> و در نبودش روی <span class="inline-code">/</span> زده می‌شود (شکست = هشدار، چون اپ ممکن است هنوز در حال بوت باشد)؛ و <span class="inline-code">https://دامنه</span> با curl.exe آزمایش می‌شود (200/301/302 = سبز). در پایان جمع‌بندی استقرار چاپ می‌شود: آدرس سایت، آدرس API، نام سرویس، پوشه و فایل کانفیگ Nginx. هر مورد قرمز = exit 1. همین اسکریپت پس از به‌روزرسانی هم (با نام U6) اجرا می‌شود.</div></div></div>
+
+  <p class="body-text">
+    <b>ترنسکریپت هر مرحله روی سرور</b> — متن کامل خروجی هر اسکریپت (همان که در ترمینال پنل می‌بینید) در این فایل‌ها هم
+    ذخیره می‌شود تا برای عیب‌یابی یا پیوست‌کردن به گزارش، همیشه در دسترس باشند:
+  </p>
+
+  <table>
+    <thead><tr><th style="width:34%;">مرحله</th><th>فایل ترنسکریپت در C:\ProgramData\DeployGuard\logs</th></tr></thead>
+    <tbody>
+      <tr><td>۰۱ — بررسی‌های پیش‌نیاز</td><td><span class="tdcode">&lt;name&gt;-preflight.log</span></td></tr>
+      <tr><td>۰۲ — آماده‌سازی پوشه‌ها و کد</td><td><span class="tdcode">&lt;name&gt;-prepare.log</span></td></tr>
+      <tr><td>۰۳ — استقرار بک‌اند</td><td><span class="tdcode">&lt;name&gt;-backend.log</span></td></tr>
+      <tr><td>۰۴ — ساخت فرانت‌اند</td><td><span class="tdcode">&lt;name&gt;-frontend.log</span></td></tr>
+      <tr><td>۰۵ — پیکربندی Nginx</td><td><span class="tdcode">&lt;name&gt;-nginx.log</span></td></tr>
+      <tr><td>به‌روزرسانی (U1 تا U5)</td><td><span class="tdcode">&lt;name&gt;-update-preflight / -prepare / -backend / -frontend / -switch.log</span></td></tr>
+      <tr><td>بازگشت به نسخهٔ سالم</td><td><span class="tdcode">&lt;name&gt;-rollback.log</span></td></tr>
+      <tr><td>۰۶ / U6 — اعتبارسنجی نهایی</td><td>ترنسکریپت ندارد — فقط کنترل می‌کند و چیزی تغییر نمی‌دهد</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">اسکریپت‌های مدیریتی و نگهداری</h3>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>کنترل سرویس — Start / Stop / Restart</h4><p>اسکریپت کوتاه کنترل سرویس (از تب «سرویس‌ها» اجرا می‌شود): سرویس <span class="inline-code">deployguard-&lt;name&gt;</span> را با Get-Service پیدا می‌کند و بسته به عملیات <span class="inline-code">Start-Service</span>، <span class="inline-code">Stop-Service -Force</span> یا <span class="inline-code">Restart-Service -Force</span> اجرا می‌کند و وضعیت نهایی را با [OK] چاپ می‌کند؛ سرویس ناموجود = [FAIL] با پیام روشن.</p></div>
+    <div class="card"><h4><span class="dot"></span>07-Health.ps1 — سلامت چندسطحی</h4><p>برای هر سطح یک خط <span class="inline-code">[CHECK] کلید | وضعیت | جزئیات</span> می‌دهد که پنل به گزارش رنگی تبدیل می‌کند: سرویس ویندوز؛ بک‌اند (زنجیرهٔ /health ← /api/health ← /docs ← / با تایم‌اوت ۸ ثانیه)؛ دیتابیس (اول JSON پاسخ سلامت اپ، بعد DATABASE_URL در .env: sqlite = وجود فایل، postgres/mysql/mssql = تست TCP سه‌ثانیه‌ای)؛ Nginx (پردازش در حال اجرا + فایل کانفیگ دامنه)؛ HTTPS واقعی روی دامنه؛ و هشدارهای نگهداری: فضای دیسک (کمتر از ۱ گیگابایت = قرمز)، انقضای گواهی SSL و حجم لاگ‌ها (بیش از ۱ گیگابایت = قرمز). جمع‌بندی: تعداد ok / warn / fail.</p></div>
+    <div class="card"><h4><span class="dot"></span>چرخش لاگ‌ها</h4><p>فایل‌های <span class="inline-code">.log</span> و <span class="inline-code">.txt</span> قدیمی‌تر از ۷ روز را در دو مقصد (لاگ‌های خود سامانه + لاگ‌های استقراربان در ProgramData) با <span class="inline-code">Compress-Archive</span> در <span class="inline-code">archive\logs-&lt;تاریخ&gt;.zip</span> آرشیو و اصل را حذف می‌کند؛ فایل‌های درگیرِ سرویس با هشدار رد می‌شوند؛ آرشیوهای قدیمی‌تر از ۳۰ روز پاک و حجم آزادشده به MB گزارش می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>حذف کامل (Uninstall)</h4><p>سه گام: توقف و حذف سرویس WinSW؛ تغییرنام کانفیگ Nginx به <span class="inline-code">&lt;name&gt;.conf.removed_&lt;timestamp&gt;</span> و سپس <span class="inline-code">nginx -t</span> + reload؛ آرشیو لاگ‌ها به <span class="inline-code">C:\ProgramData\DeployGuard\backups\&lt;name&gt;_&lt;timestamp&gt;</span> و در پایان حذف کامل پوشهٔ سامانه با همهٔ محتویات.</p></div>
+  </div>
+
+  <h3 style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">اسکریپت‌های به‌روزرسانی نسخه‌دار (U1 تا U6) و بازگشت</h3>
+  <p class="body-text">
+    ویزارد به‌روزرسانی هم یک پلن شش‌اسکریپتی می‌سازد با همان اسکلت مشترک؛ تفاوت کلیدی، <b>غیرمخرب بودن</b> آن است:
+    نسخهٔ فعال تا مرحلهٔ سوییچ نهایی (U5) دست‌نخورده در سرویس باقی می‌ماند.
+  </p>
+
+  <table class="splittable">
+    <thead><tr><th style="width:26%;">اسکریپت</th><th style="width:22%;">مرحلهٔ پنل</th><th>دقیقاً چه می‌کند</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tdcode">U1-Update-Preflight.ps1</span></td><td>بررسی پیش از به‌روزرسانی</td><td>وجود پوشهٔ استقرار و منبع جدید را کنترل می‌کند؛ نبود سرویس فعلی = هشدار؛ اگر پردازش بیگانه‌ای پورت بک‌اند را گرفته باشد هشدار با دستور توقف می‌دهد (سوییچ نهایی به این پورت نیاز دارد) و حداقل ۱ گیگابایت فضای آزاد درایو استقرار را شرط می‌داند.</td></tr>
+      <tr><td><span class="tdcode">U2-Stage-Release.ps1</span></td><td>آماده‌سازی نسخهٔ جدید</td><td>ساخت <span class="tdcode">releases\&lt;tag&gt;\</span> با backend/frontend/www و پاک‌سازی بقایای تلاش ناموفق قبلی با همان tag؛ استخراج/کپی منبع جدید (همان منطق مرحلهٔ ۰۲)؛ انتقال وضعیت اجرایی از نسخهٔ فعال: <span class="tdcode">.env</span>، فایل‌های دیتابیس sqlite و پوشه‌های media/uploads/static؛ ثبت <span class="tdcode">release.json</span>. نسخهٔ در حال اجرا هیچ تغییری نمی‌کند.</td></tr>
+      <tr><td><span class="tdcode">U3-Backend-Deps.ps1</span></td><td>وابستگی‌های بک‌اند</td><td>venv مشترک (خارج از releases تا کش pip و وضعیت حفظ شود) را آماده و requirements.txt نسخهٔ جدید را در همان venv نصب می‌کند؛ سرویس همچنان نسخهٔ فعلی را اجرا می‌کند.</td></tr>
+      <tr><td><span class="tdcode">U4-Frontend-Build.ps1</span></td><td>ساخت فرانت‌اند</td><td>npm ci/install و npm run build داخل پوشهٔ نسخهٔ جدید؛ خروجی فقط در <span class="tdcode">releases\&lt;tag&gt;\www</span> مرحله‌بندی می‌شود و منتشر نمی‌شود؛ نبود package.json یعنی سایت فعلی حفظ می‌شود.</td></tr>
+      <tr><td><span class="tdcode">U5-Safe-Switch.ps1</span></td><td>سوییچ ایمن</td><td>تنها مرحلهٔ مخرب: بکاپ XML سرویس (<span class="tdcode">.bak_&lt;tag&gt;</span>) ← انتشار www جدید ← توقف سرویس ← تغییر <span class="tdcode">&lt;workingdirectory&gt;</span> به نسخهٔ جدید ← uninstall/install سرویس ← استارت؛ شکست در استارت یا نپاسخ‌گویی پورت تا ۹۰ ثانیه = بازگشت خودکار به نسخهٔ قبلی (بازگردانی XML + نصب + استارت)؛ در پایان ثبت <span class="tdcode">releases\.active</span> = tag.</td></tr>
+      <tr><td><span class="tdcode">U6-Verify.ps1</span></td><td>اعتبارسنجی نهایی</td><td>همان ۰۶-Verify: سرویس، پورت، پروب HTTP و HTTPS دامنه.</td></tr>
+    </tbody>
+  </table>
+
+  <p class="body-text">
+    اسکریپت <b>«بازگشت به نسخهٔ سالم»</b> (از تب «نسخه‌ها») هم الگوی مشابهی دارد: بکاپ XML سرویس، توقف سرویس، تغییر
+    مقصد به <span class="inline-code">releases\&lt;tag&gt;\backend</span> نسخهٔ سالم، نصب و استارت با بازگردانی خودکار تعریف سرویس در
+    صورت خطا، گیت ۹۰ ثانیه‌ای پورت، انتشار دوبارهٔ www همان نسخه و ثبت <span class="inline-code">.active</span>. یک هشدار مهم هم چاپ
+    می‌کند: بازگشت فقط «کد» را برمی‌گرداند و تغییرات اسکیمای دیتابیس نسخهٔ جدیدتر خودکار برنمی‌گردند.
+  </p>
+
+  <h3 style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">دو فایل کانفیگی که همراه اسکریپت‌ها تولید می‌شوند</h3>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>conf.d\&lt;name&gt;.conf — کانفیگ Nginx دامنه</h4><p>ریدایرکت دائمی ۸۰ به ۴۴۳؛ listener با ssl/http2 و TLS1.2/1.3؛ هدرهای امنیتی (HSTS، nosniff، SAMEORIGIN)؛ <span class="inline-code">client_max_body_size</span> برابر UploadLimitMb ویزارد؛ gzip؛ سرو SPA با try_files؛ کش ۳۰ روزهٔ فایل‌های استاتیک؛ پروکسی <span class="inline-code">/api/</span> به <span class="inline-code">127.0.0.1:&lt;port&gt;</span> با پشتیبانی وب‌سوکت (Upgrade) و تایم‌اوت‌های ProxyTimeoutSec؛ مسدودسازی یا انتشار /docs و /openapi.json بسته به BlockDocs؛ و <span class="inline-code">/healthz</span> با پاسخ 200 برای مانیتورینگ.</p></div>
+    <div class="card"><h4><span class="dot"></span>service\&lt;name&gt;-service.xml — تعریف سرویس WinSW</h4><p>شناسهٔ <span class="inline-code">deployguard-&lt;name&gt;</span>؛ اجرای <span class="inline-code">backend\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port &lt;port&gt;</span> با workingdirectory پوشهٔ بک‌اند؛ استارت Automatic؛ ری‌استارت خودکار پس از خطا با تأخیر ۵ و ۱۰ ثانیه و resetfailure یک‌ساعته؛ لاگ roll-by-size ده‌مگابایتی تا ۸ فایل در پوشهٔ logs؛ تایم‌اوت توقف ۱۵ ثانیه. در سوییچ به‌روزرسانی یا بازگشت، فقط مقدار workingdirectory همین فایل تغییر می‌کند — بقیهٔ تعریف ثابت می‌ماند.</p></div>
+  </div>
+
+  <!-- ═══════ فصل ۶ ═══════ -->
+  <div class="chapter-header ch-a5" id="ch6">
+    <span class="ch-num">۰۶</span>
+    <span class="ch-tag">CHAPTER 06</span>
     <h2>مدیریت سامانه‌های مستقرشده</h2>
     <p class="lead">چرخه حیات پس از استقرار: سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت، کنترل سرویس‌ها، جزئیات فنی و حذف کامل.</p>
     <div class="divider"></div>
@@ -615,10 +744,10 @@ tr{break-inside:avoid;}
 
   <div class="callout warn"><b>حذف کامل:</b> با تأیید دومرحله‌ای انجام می‌شود — سرویس ویندوز حذف، کانفیگ Nginx پاک و ریلود می‌شود، لاگ‌ها آرشیو و پوشه سامانه (شامل دیتابیس خودِ اپ) حذف می‌گردد. این عملیات برگشت‌پذیر نیست؛ پیش از آن از پوشه <span class="inline-code">logs</span> و داده‌ها پشتیبان بگیرید.</div>
 
-  <!-- ═══════ فصل ۶ ═══════ -->
-  <div class="chapter-header ch-a6" id="ch6">
-    <span class="ch-num">۰۶</span>
-    <span class="ch-tag">CHAPTER 06</span>
+  <!-- ═══════ فصل ۷ ═══════ -->
+  <div class="chapter-header ch-a6" id="ch7">
+    <span class="ch-num">۰۷</span>
+    <span class="ch-tag">CHAPTER 07</span>
     <h2>امنیت و نگهداری</h2>
     <p class="lead">چند عادت ساده که پنل و سرور شما را سالم و امن نگه می‌دارد.</p>
     <div class="divider"></div>
@@ -634,10 +763,10 @@ tr{break-inside:avoid;}
 
   <div class="callout tip"><b>فایروال:</b> پنل هنگام استقرار، قاعده فایروال پورت بک‌اند را خودکار می‌سازد؛ برای خود پنل (پورت ۳۰۰۰) در صورت نیاز دستی اقدام کنید — دستور در فصل ۲ آمده است.</div>
 
-  <!-- ═══════ فصل ۷ ═══════ -->
-  <div class="chapter-header ch-a7" id="ch7">
-    <span class="ch-num">۰۷</span>
-    <span class="ch-tag">CHAPTER 07</span>
+  <!-- ═══════ فصل ۸ ═══════ -->
+  <div class="chapter-header ch-a7" id="ch8">
+    <span class="ch-num">۰۸</span>
+    <span class="ch-tag">CHAPTER 08</span>
     <h2>عیب‌یابی و پرسش‌های رایج</h2>
     <p class="lead">حالت‌های پرتکرار با علت و راه‌حل + راهنمای خواندن گزارش خطای پنل. برای ردیابی دقیق، لاگ‌ها بهترین دوست شما هستند: در پنل مسیر «سامانه‌ها ← جزئیات ← رویدادها» و روی دیسک پوشه logs پکیج و هر سامانه.</p>
     <div class="divider"></div>
@@ -686,7 +815,7 @@ tr{break-inside:avoid;}
   </div>
   <div class="content">
     <div class="brand-sm">استقرار<em>بان</em></div>
-    <div class="latin">MAHDEPLOY V1.3.0</div>
+    <div class="latin">MAHDEPLOY V1.3.1</div>
     <p class="tagline">
       از پیش‌بررسی تا ترمینال زنده، از گزارش دقیق خطا تا سلامت چندسطحی و بازگشت به نسخهٔ سالم —
       استقرار استاندارد FastAPI + React روی ویندوز سرور، بدون نصب هیچ پیش‌نیازی، با رابط فارسی و گزارش شفاف PowerShell.
@@ -698,7 +827,7 @@ tr{break-inside:avoid;}
       <span class="pill">۴ · نسخه‌بندی و بازگشت</span>
     </div>
     <div class="meta-line">
-      سند رسمی راهنمای کاربر — نسخه ۱.۳.۰ — آبان ۱۴۰۵ — فونت سند: B Mitra<br>
+      سند رسمی راهنمای کاربر — نسخه ۱.۳.۱ — آبان ۱۴۰۵ — فونت سند: B Mitra<br>
       تهیه شده توسط شرکت ماه افزارهوشمند رسا — <span class="mono">MahAI.ir</span><br>
       <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
     </div>
