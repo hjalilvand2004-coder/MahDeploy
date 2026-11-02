@@ -8,6 +8,7 @@
 
 /* ================= page & base ================= */
 @page { size: 794px 1123px; margin: 0; }
+@page chapter { size: 794px 1123px; margin: 52px 0 46px 0; }
 :root{
   --c-bg:#0E0C1D;
   --c-card:rgba(167,139,250,0.055);
@@ -131,40 +132,85 @@ p{margin:0;}
 .toc .note{margin-top:22px;font-size:11.5px;color:var(--c-faint);line-height:2;
   border-right:3px solid var(--c-border);padding-right:12px;}
 
-/* ================= flowing content ================= */
-.main-content{padding:56px 72px 40px 72px;}
-.chapter-header{break-after:avoid;break-inside:avoid;margin-top:20px;margin-bottom:14px;}
-.chapter-header:first-child{margin-top:0;}
-.chapter-header .ch-tag{
-  display:inline-block;font-family:'JetBrains Mono',monospace;direction:ltr;
-  font-size:10.5px;letter-spacing:3px;color:var(--c-accent);opacity:.85;
-  border:1px solid var(--c-border);border-radius:8px;padding:3px 10px;background:var(--c-card);
-}
-.chapter-header h2{font-size:26px;font-weight:900;margin:10px 0 4px 0;line-height:1.45;}
-.chapter-header .lead{color:var(--c-muted);font-size:13px;max-width:640px;}
-.chapter-header::after{content:'';display:block;height:2px;width:64px;background:linear-gradient(270deg,var(--c-accent),rgba(167,139,250,0.15));border-radius:2px;margin-top:14px;}
+/* ================= flowing content =================
+   هر فصل از یک صفحهٔ جدید شروع می‌شود (صفحهٔ نام‌دار chapter با حاشیهٔ بالا/پایین) */
+.main-content{padding:0 72px 8px 72px;page:chapter;}
 
-.body-text{text-align:justify;color:var(--c-text);font-size:14px;line-height:1.98;margin-bottom:10px;overflow-wrap:break-word;}
+/* ---- chapter banner : هر فصل رنگ اختصاصی خودش را دارد ---- */
+.chapter-header{
+  --ch-rgb:167,139,250;   /* بنفش برند — پیش‌فرض */
+  --ch2-rgb:125,211,252;
+  break-before:page;break-after:avoid;break-inside:avoid;
+  position:relative;overflow:hidden;
+  margin:0 0 18px 0;padding:20px 26px 16px 26px;
+  border-radius:18px;
+  border:1px solid rgba(var(--ch-rgb),0.32);
+  background:
+    radial-gradient(460px 220px at 84% -30%, rgba(var(--ch-rgb),0.30), transparent 62%),
+    radial-gradient(360px 200px at 6% 135%, rgba(var(--ch2-rgb),0.16), transparent 58%),
+    linear-gradient(135deg, rgba(var(--ch-rgb),0.14), rgba(14,12,29,0) 52%, rgba(var(--ch-rgb),0.055));
+}
+.chapter-header::before{ /* شبکهٔ ظریف پس‌زمینهٔ بنر */
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(var(--ch-rgb),0.07) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(var(--ch-rgb),0.07) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.chapter-header::after{ /* نوار رنگی لبهٔ راست */
+  content:'';position:absolute;top:0;bottom:0;right:0;width:5px;
+  background:linear-gradient(180deg,rgba(var(--ch-rgb),1),rgba(var(--ch2-rgb),0.8));
+  border-radius:0 18px 18px 0;
+}
+.chapter-header .ch-num{ /* عدد بزرگ تزئینی */
+  position:absolute;left:20px;top:50%;transform:translateY(-54%);
+  font-size:96px;font-weight:900;line-height:1;letter-spacing:1px;
+  color:rgba(var(--ch-rgb),0.17);pointer-events:none;
+}
+.chapter-header .ch-tag{
+  position:relative;display:inline-block;font-family:'JetBrains Mono',monospace;direction:ltr;
+  font-size:10.5px;letter-spacing:3px;
+  color:rgb(var(--ch-rgb));
+  border:1px solid rgba(var(--ch-rgb),0.45);border-radius:999px;padding:4px 13px;
+  background:rgba(var(--ch-rgb),0.10);
+}
+.chapter-header h2{position:relative;font-size:28px;font-weight:900;margin:10px 0 4px 0;line-height:1.42;max-width:470px;}
+.chapter-header .lead{position:relative;color:var(--c-muted);font-size:13.5px;max-width:465px;line-height:1.95;}
+.chapter-header .divider{display:none;}
+.main-content > .chapter-header:first-child{break-before:auto;} /* فصل ۱ بلافاصله بعد از فهرست */
+
+/* ---- رنگ اختصاصی هر فصل ---- */
+.ch-a1{--ch-rgb:167,139,250;--ch2-rgb:125,211,252;}  /* بنفش  */
+.ch-a2{--ch-rgb:94,234,212; --ch2-rgb:167,139,250;}  /* فیروزه‌ای */
+.ch-a3{--ch-rgb:125,211,252;--ch2-rgb:94,234,212;}   /* آبی آسمانی */
+.ch-a4{--ch-rgb:240,171,252;--ch2-rgb:125,211,252;}  /* ارغوانی */
+.ch-a5{--ch-rgb:110,231,183;--ch2-rgb:125,211,252;}  /* سبز */
+.ch-a6{--ch-rgb:252,211,77; --ch2-rgb:251,113,133;}  /* کهربایی */
+.ch-a7{--ch-rgb:251,113,133;--ch2-rgb:252,211,77;}   /* سرخابی */
+#ch7-check{break-before:auto;--ch-rgb:203,213,225;--ch2-rgb:125,211,252;} /* چک‌لیست — خنثی */
+#ch7-check .ch-num{font-size:72px;}
+
+.body-text{text-align:justify;color:var(--c-text);font-size:13.5px;line-height:1.85;margin-bottom:8px;overflow-wrap:break-word;}
 .body-text b{color:var(--c-accent-soft);}
 .body-text .mono, .inline-code{
   font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed;
   background:rgba(125,211,252,0.08);border:1px solid rgba(125,211,252,0.18);
-  color:var(--c-accent2);border-radius:6px;padding:1px 7px;font-size:12px;white-space:nowrap;
+  color:var(--c-accent2);border-radius:6px;padding:1px 7px;font-size:12px;
+  white-space:normal;overflow-wrap:anywhere;max-width:100%;
 }
 
 .card{break-inside:avoid;border:1px solid var(--c-border-soft);border-radius:14px;
-  background:var(--c-card);padding:14px 16px;margin-bottom:10px;}
-.card h4{font-size:14.5px;font-weight:800;margin:0 0 6px 0;display:flex;align-items:center;gap:8px;}
+  background:var(--c-card);padding:11px 14px;margin-bottom:8px;}
+.card h4{font-size:14px;font-weight:800;margin:0 0 5px 0;display:flex;align-items:center;gap:8px;}
 .card h4 .dot{width:8px;height:8px;border-radius:3px;background:var(--c-accent);flex-shrink:0;}
-.card p{font-size:12.5px;line-height:2;color:var(--c-muted);text-align:justify;}
+.card p{font-size:12px;line-height:1.8;color:var(--c-muted);text-align:justify;}
 
-.grid2{display:flex;flex-wrap:wrap;gap:10px;max-width:100%;margin-bottom:10px;}
+.grid2{display:flex;flex-wrap:wrap;gap:8px;max-width:100%;margin-bottom:8px;}
 .grid2 .card{flex:1 1 320px;min-width:280px;max-width:100%;margin-bottom:0;}
 
 /* step rows */
 .step-row{break-inside:avoid;display:flex;gap:14px;align-items:flex-start;
   border:1px solid var(--c-border-soft);border-radius:14px;background:var(--c-card);
-  padding:12px 15px;margin-bottom:8px;max-width:100%;}
+  padding:10px 14px;margin-bottom:7px;max-width:100%;}
 .step-row .n{
   width:34px;height:34px;border-radius:10px;flex-shrink:0;margin-top:2px;
   background:linear-gradient(135deg,rgba(139,92,246,0.5),rgba(217,70,239,0.4));
@@ -173,10 +219,10 @@ p{margin:0;}
 }
 .step-row .t{min-width:0;flex:1;}
 .step-row .t .tt{font-weight:800;font-size:14px;}
-.step-row .t .tx{font-size:12.5px;color:var(--c-muted);line-height:2;text-align:justify;margin-top:3px;}
+.step-row .t .tx{font-size:12px;color:var(--c-muted);line-height:1.85;text-align:justify;margin-top:3px;}
 
 /* callouts */
-.callout{break-inside:avoid;border-radius:14px;padding:11px 15px;margin-bottom:9px;font-size:12.5px;line-height:1.95;}
+.callout{break-inside:avoid;border-radius:14px;padding:9px 13px;margin-bottom:8px;font-size:12px;line-height:1.85;}
 .callout.tip{border:1px solid rgba(252,211,77,0.22);background:rgba(252,211,77,0.05);color:#FDE9AE;}
 .callout.warn{border:1px solid rgba(251,113,133,0.25);background:rgba(251,113,133,0.06);color:#FECDD3;}
 .callout.ok{border:1px solid rgba(110,231,183,0.22);background:rgba(110,231,183,0.05);color:#B9F3DC;}
@@ -184,7 +230,7 @@ p{margin:0;}
 
 /* status legend */
 .legend{display:flex;flex-wrap:wrap;gap:10px;max-width:100%;margin-bottom:12px;}
-.legend .item{flex:1 1 200px;min-width:170px;max-width:100%;border-radius:12px;padding:11px 14px;font-size:12px;line-height:1.9;border:1px solid;}
+.legend .item{flex:1 1 200px;min-width:170px;max-width:100%;border-radius:12px;padding:9px 12px;font-size:12px;line-height:1.8;border:1px solid;}
 .legend .ok{border-color:rgba(110,231,183,0.25);background:rgba(110,231,183,0.055);}
 .legend .warn{border-color:rgba(252,211,77,0.25);background:rgba(252,211,77,0.055);}
 .legend .fail{border-color:rgba(251,113,133,0.28);background:rgba(251,113,133,0.06);}
@@ -199,18 +245,18 @@ table.splittable tbody tr{break-inside:avoid;}
 thead{display:table-header-group;}
 th{
   background:var(--c-header);color:var(--c-text);font-weight:800;
-  padding:10px 12px;text-align:right;border:1px solid var(--c-border-soft);font-size:12.5px;
+  padding:8px 11px;text-align:right;border:1px solid var(--c-border-soft);font-size:12.5px;
 }
-td{padding:8px 11px;border:1px solid rgba(167,139,250,0.09);vertical-align:top;line-height:1.95;color:var(--c-muted);overflow-wrap:break-word;}
+td{padding:7px 10px;border:1px solid rgba(167,139,250,0.09);vertical-align:top;line-height:1.85;color:var(--c-muted);overflow-wrap:break-word;}
 tbody tr:nth-child(odd) td{background:rgba(167,139,250,0.028);}
 td .mono, .tdcode{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed;color:var(--c-accent2);font-size:11px;}
 tr{break-inside:avoid;}
 
 /* architecture flow */
-.flow{break-inside:avoid;border:1px solid var(--c-border-soft);border-radius:14px;background:rgba(10,8,26,0.55);padding:14px 16px;margin-bottom:10px;}
-.flow .fl-title{font-size:12px;color:var(--c-faint);margin-bottom:10px;font-weight:700;}
+.flow{break-inside:avoid;border:1px solid var(--c-border-soft);border-radius:14px;background:rgba(10,8,26,0.55);padding:11px 14px;margin-bottom:8px;}
+.flow .fl-title{font-size:12px;color:var(--c-faint);margin-bottom:8px;font-weight:700;}
 .flow .lane{display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:100%;direction:ltr;}
-.flow .node{flex:1 1 120px;min-width:100px;max-width:100%;border:1px solid var(--c-border);border-radius:10px;background:var(--c-card2);padding:9px 10px;text-align:center;}
+.flow .node{flex:1 1 120px;min-width:100px;max-width:100%;border:1px solid var(--c-border);border-radius:10px;background:var(--c-card2);padding:7px 9px;text-align:center;}
 .flow .node b{display:block;font-size:12px;color:var(--c-text);font-family:'JetBrains Mono',monospace;}
 .flow .node span{font-size:10px;color:var(--c-faint);}
 .flow .arr{color:var(--c-accent);flex:0 0 auto;font-size:14px;}
@@ -221,8 +267,8 @@ tr{break-inside:avoid;}
 .codeblock .cb-head{display:flex;justify-content:space-between;padding:8px 14px;
   border-bottom:1px solid var(--c-border-soft);background:rgba(167,139,250,0.06);
   font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--c-faint);direction:ltr;}
-.codeblock pre{margin:0;padding:14px 16px;direction:ltr;text-align:left;
-  font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.95;color:#C8E8F8;overflow-wrap:break-word;white-space:pre-wrap;}
+.codeblock pre{margin:0;padding:11px 14px;direction:ltr;text-align:left;
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:#C8E8F8;overflow-wrap:break-word;white-space:pre-wrap;}
 .codeblock pre .c{color:#8B84B5;} .codeblock pre .g{color:#7DE8BC;}
 
 /* ending page */
@@ -294,13 +340,13 @@ tr{break-inside:avoid;}
   <h2>فهرست مطالب</h2>
   <p class="sub">هفت فصل، از آشنایی با سامانه تا عیب‌یابی — هر بخش با همان زبانی که در خود پنل می‌بینید.</p>
 
-  <div class="row"><span class="num">۱</span><span class="t"><span class="tt">آشنایی با استقراربان</span><br><span class="ts">چرا این سامانه؟ معماری، امکانات کلیدی و جریان کار</span></span><span class="pg" id="toc-ch1">۱</span></div>
-  <div class="row"><span class="num">۲</span><span class="t"><span class="tt">اجرا و راه‌اندازی</span><br><span class="ts">اجرای پکیج پرتابل، ثبت سرویس ویندوز و نخستین ورود</span></span><span class="pg" id="toc-ch2">۲</span></div>
-  <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۳</span></div>
-  <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۴</span></div>
-  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch5">۵</span></div>
-  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۶</span></div>
-  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch7">۷</span></div>
+  <div class="row"><span class="num">۱</span><span class="t"><span class="tt">آشنایی با استقراربان</span><br><span class="ts">چرا این سامانه؟ معماری، امکانات کلیدی و جریان کار</span></span><span class="pg" id="toc-ch1">۳</span></div>
+  <div class="row"><span class="num">۲</span><span class="t"><span class="tt">اجرا و راه‌اندازی</span><br><span class="ts">اجرای پکیج پرتابل، ثبت سرویس ویندوز و نخستین ورود</span></span><span class="pg" id="toc-ch2">۴</span></div>
+  <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۵</span></div>
+  <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۶</span></div>
+  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch5">۸</span></div>
+  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۱۰</span></div>
+  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch7">۱۱</span></div>
 
   <p class="note">
     در خود پنل نیز هر صفحه دکمه «راهنما» دارد که توضیح همان بخش را همین‌جا و بدون خروج از پنل نمایش می‌دهد؛
@@ -311,7 +357,8 @@ tr{break-inside:avoid;}
 <!-- ═══════════════════ BODY ═══════════════════ -->
 <div class="main-content">
   <!-- ═══════ فصل ۱ ═══════ -->
-  <div class="chapter-header" id="ch1">
+  <div class="chapter-header ch-a1" id="ch1">
+    <span class="ch-num">۰۱</span>
     <span class="ch-tag">CHAPTER 01</span>
     <h2>آشنایی با استقراربان</h2>
     <p class="lead">چرا استقرار دستی روی ویندوز سرور دردسر دارد و این سامانه چه چیزی را استاندارد می‌کند.</p>
@@ -330,17 +377,6 @@ tr{break-inside:avoid;}
     همه ران‌تایم‌ها داخل پکیج قرار دارند. رابط کاربری فارسی و راست‌به‌چپ است و هر صفحه، دکمه «راهنما»ی خودش را دارد.
   </p>
 
-  <div class="grid2">
-    <div class="card"><h4><span class="dot"></span>پیش‌بررسی پیش از نصب</h4><p>DNS دامنه، آزاد بودن پورت، اعتبار و تطابق گواهی SSL و وجود مسیر کد — همه به‌صورت زنده و قبل از هر تغییری روی سرور کنترل می‌شوند.</p></div>
-    <div class="card"><h4><span class="dot"></span>اسکریپت‌های استاندارد</h4><p>۶ اسکریپت PowerShell استاندارد برای هر استقرار تولید می‌شود؛ قابل مشاهده، کپی و دانلود — شفافیت کامل درباره «چه چیزی روی سرورم اجرا می‌شود».</p></div>
-    <div class="card"><h4><span class="dot"></span>Nginx و SSL خودکار</h4><p>کانفیگ HTTPS روی پورت ۴۴۳ با گواهی شما، پروکسی /api به بک‌اند و سرو فایل‌های React به‌صورت خودکار ساخته و ریلود می‌شود.</p></div>
-    <div class="card"><h4><span class="dot"></span>سرویس ویندوز با WinSW</h4><p>بک‌اند FastAPI به‌عنوان سرویس ویندوز ثبت می‌شود؛ با بوت سرور بالا می‌آید و در صورت کرش، خودکار دوباره اجرا می‌گردد.</p></div>
-    <div class="card"><h4><span class="dot"></span>پایش زنده سرور</h4><p>مصرف CPU، رم و دیسک، وضعیت Nginx و نقشه کامل پورت‌های اشغال‌شده، هر ۴ ثانیه به‌روزرسانی می‌شود.</p></div>
-    <div class="card"><h4><span class="dot"></span>مدیریت چرخه حیات</h4><p>شروع، توقف، ری‌استارت و حذف کامل هر سامانه مستقرشده — همراه با آرشیو لاگ‌ها و پاک‌سازی کانفیگ‌ها.</p></div>
-    <div class="card"><h4><span class="dot"></span>گزارش خطای قابل ردیابی</h4><p>اگر هر اسکریپتی در اجرا خطا بدهد، پنل متن خطا، علت احتمالی و راه‌حل‌های پیشنهادی فارسی را کنار همان مرحله نشان می‌دهد و در تاریخچه رویدادها ثبت می‌کند.</p></div>
-    <div class="card"><h4><span class="dot"></span>به‌روزرسانی بدون دلهره</h4><p>نسخه جدید کنار نسخه فعال آماده و تست می‌شود و نسخهٔ فعال تا سوییچ نهایی دست‌نخورده می‌ماند؛ با تاریخچه نسخه‌ها، بازگشت سریع به نسخهٔ سالم همیشه ممکن است.</p></div>
-  </div>
-
   <div class="flow">
     <div class="fl-title">معماری ترافیک پس از استقرار</div>
     <div class="lane">
@@ -357,8 +393,20 @@ tr{break-inside:avoid;}
     </div>
   </div>
 
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>پیش‌بررسی پیش از نصب</h4><p>DNS دامنه، آزاد بودن پورت، اعتبار و تطابق گواهی SSL و وجود مسیر کد — همه به‌صورت زنده و قبل از هر تغییری روی سرور کنترل می‌شوند.</p></div>
+    <div class="card"><h4><span class="dot"></span>اسکریپت‌های استاندارد</h4><p>۶ اسکریپت PowerShell استاندارد برای هر استقرار تولید می‌شود؛ قابل مشاهده، کپی و دانلود — شفافیت کامل درباره «چه چیزی روی سرورم اجرا می‌شود».</p></div>
+    <div class="card"><h4><span class="dot"></span>Nginx و SSL خودکار</h4><p>کانفیگ HTTPS روی پورت ۴۴۳ با گواهی شما، پروکسی /api به بک‌اند و سرو فایل‌های React به‌صورت خودکار ساخته و ریلود می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>سرویس ویندوز با WinSW</h4><p>بک‌اند FastAPI به‌عنوان سرویس ویندوز ثبت می‌شود؛ با بوت سرور بالا می‌آید و در صورت کرش، خودکار دوباره اجرا می‌گردد.</p></div>
+    <div class="card"><h4><span class="dot"></span>پایش زنده سرور</h4><p>مصرف CPU، رم و دیسک، وضعیت Nginx و نقشه کامل پورت‌های اشغال‌شده، هر ۴ ثانیه به‌روزرسانی می‌شود.</p></div>
+    <div class="card"><h4><span class="dot"></span>مدیریت چرخه حیات</h4><p>شروع، توقف، ری‌استارت و حذف کامل هر سامانه مستقرشده — همراه با آرشیو لاگ‌ها و پاک‌سازی کانفیگ‌ها.</p></div>
+    <div class="card"><h4><span class="dot"></span>گزارش خطای قابل ردیابی</h4><p>اگر هر اسکریپتی در اجرا خطا بدهد، پنل متن خطا، علت احتمالی و راه‌حل‌های پیشنهادی فارسی را کنار همان مرحله نشان می‌دهد و در تاریخچه رویدادها ثبت می‌کند.</p></div>
+    <div class="card"><h4><span class="dot"></span>به‌روزرسانی بدون دلهره</h4><p>نسخه جدید کنار نسخه فعال آماده و تست می‌شود و نسخهٔ فعال تا سوییچ نهایی دست‌نخورده می‌ماند؛ با تاریخچه نسخه‌ها، بازگشت سریع به نسخهٔ سالم همیشه ممکن است.</p></div>
+  </div>
+
   <!-- ═══════ فصل ۲ ═══════ -->
-  <div class="chapter-header" id="ch2">
+  <div class="chapter-header ch-a2" id="ch2">
+    <span class="ch-num">۰۲</span>
     <span class="ch-tag">CHAPTER 02</span>
     <h2>اجرا و راه‌اندازی</h2>
     <p class="lead">از بازکردن ZIP تا نخستین ورود موفق — در کمتر از پنج دقیقه.</p>
@@ -380,7 +428,8 @@ tr{break-inside:avoid;}
   <div class="callout warn"><b>دسترسی Administrator:</b> برای اجرای عملیات واقعی استقرار (PowerShell، سرویس ویندوز، Nginx) پنل را در نشستی با دسترسی ادمین اجرا کنید؛ در غیر این صورت پنل فقط حالت نمایشی دارد.</div>
 
   <!-- ═══════ فصل ۳ ═══════ -->
-  <div class="chapter-header" id="ch3">
+  <div class="chapter-header ch-a3" id="ch3">
+    <span class="ch-num">۰۳</span>
     <span class="ch-tag">CHAPTER 03</span>
     <h2>داشبورد سلامت سرور</h2>
     <p class="lead">نگاه اول: سرور حالا در چه وضعیتی است و چه چیزی روی آن در حال اجراست.</p>
@@ -409,7 +458,8 @@ tr{break-inside:avoid;}
   <div class="callout tip"><b>دکمه «راهنمای داشبورد»</b> در بالای همین صفحه، معرفی کوتاه‌تری از همین ویجت‌ها را داخل پنل نشان می‌دهد.</div>
 
   <!-- ═══════ فصل ۴ ═══════ -->
-  <div class="chapter-header" id="ch4">
+  <div class="chapter-header ch-a4" id="ch4">
+    <span class="ch-num">۰۴</span>
     <span class="ch-tag">CHAPTER 04</span>
     <h2>ویزارد استقرار — گام‌به‌گام</h2>
     <p class="lead">قلب سامانه: از هویت سامانه تا ترمینال زنده، در پنج مرحله کنترل‌شده.</p>
@@ -479,7 +529,8 @@ tr{break-inside:avoid;}
   <div class="callout ok"><b>فلسفه استقراربان:</b> تا همه بررسی‌ها سبز نشوند هیچ خطی روی سرور اجرا نمی‌شود؛ و پیش از اجرا هم همه‌چیز با چشم خودتان قابل بازبینی است.</div>
 
   <!-- ═══════ فصل ۵ ═══════ -->
-  <div class="chapter-header" id="ch5">
+  <div class="chapter-header ch-a5" id="ch5">
+    <span class="ch-num">۰۵</span>
     <span class="ch-tag">CHAPTER 05</span>
     <h2>مدیریت سامانه‌های مستقرشده</h2>
     <p class="lead">چرخه حیات پس از استقرار: سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت، کنترل سرویس‌ها، جزئیات فنی و حذف کامل.</p>
@@ -565,7 +616,8 @@ tr{break-inside:avoid;}
   <div class="callout warn"><b>حذف کامل:</b> با تأیید دومرحله‌ای انجام می‌شود — سرویس ویندوز حذف، کانفیگ Nginx پاک و ریلود می‌شود، لاگ‌ها آرشیو و پوشه سامانه (شامل دیتابیس خودِ اپ) حذف می‌گردد. این عملیات برگشت‌پذیر نیست؛ پیش از آن از پوشه <span class="inline-code">logs</span> و داده‌ها پشتیبان بگیرید.</div>
 
   <!-- ═══════ فصل ۶ ═══════ -->
-  <div class="chapter-header" id="ch6">
+  <div class="chapter-header ch-a6" id="ch6">
+    <span class="ch-num">۰۶</span>
     <span class="ch-tag">CHAPTER 06</span>
     <h2>امنیت و نگهداری</h2>
     <p class="lead">چند عادت ساده که پنل و سرور شما را سالم و امن نگه می‌دارد.</p>
@@ -583,7 +635,8 @@ tr{break-inside:avoid;}
   <div class="callout tip"><b>فایروال:</b> پنل هنگام استقرار، قاعده فایروال پورت بک‌اند را خودکار می‌سازد؛ برای خود پنل (پورت ۳۰۰۰) در صورت نیاز دستی اقدام کنید — دستور در فصل ۲ آمده است.</div>
 
   <!-- ═══════ فصل ۷ ═══════ -->
-  <div class="chapter-header" id="ch7">
+  <div class="chapter-header ch-a7" id="ch7">
+    <span class="ch-num">۰۷</span>
     <span class="ch-tag">CHAPTER 07</span>
     <h2>عیب‌یابی و پرسش‌های رایج</h2>
     <p class="lead">حالت‌های پرتکرار با علت و راه‌حل + راهنمای خواندن گزارش خطای پنل. برای ردیابی دقیق، لاگ‌ها بهترین دوست شما هستند: در پنل مسیر «سامانه‌ها ← جزئیات ← رویدادها» و روی دیسک پوشه logs پکیج و هر سامانه.</p>
@@ -608,6 +661,7 @@ tr{break-inside:avoid;}
   </table>
 
   <div class="chapter-header" id="ch7-check" style="margin-top:18px;">
+    <span class="ch-num">✓</span>
     <span class="ch-tag">CHECKLIST</span>
     <h2 style="font-size:20px;">پیش از هر استقرار، این ۴ مورد را چک کنید</h2>
     <p class="lead">سی ثانیه بازبینی، از یک ساعت عیب‌یابی بهتر است. پس از استقرار هم نشان سبز پورت را در تب «سرویس‌ها» و نتیجه ۶ اسکریپت را در «سامانه‌ها ← جزئیات» مرور کنید.</p>
