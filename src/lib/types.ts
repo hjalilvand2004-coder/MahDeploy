@@ -57,6 +57,9 @@ export interface DeployConfig {
   sslCertPath: string;
   sslKeyPath: string;
   nginxPath: string;
+  uploadLimitMb: number;
+  proxyTimeoutSec: number;
+  blockDocs: boolean;
 }
 
 export interface GeneratedScript {
@@ -67,6 +70,13 @@ export interface GeneratedScript {
   content: string;
 }
 
+/** automatic failure analysis attached to a failed step */
+export interface FailureAnalysis {
+  cause: string;
+  hints: string[];
+  failLine?: string;
+}
+
 export interface StepState {
   id: string;
   scriptId: string;
@@ -75,4 +85,24 @@ export interface StepState {
   output: string[];
   durationMs: number;
   startedAt?: number;
+  analysis?: FailureAnalysis;
+}
+
+/* ---------------- health report ---------------- */
+
+export type HealthStatus = "ok" | "warn" | "fail" | "unknown";
+
+export interface HealthLevel {
+  key: string;
+  title: string;
+  status: HealthStatus;
+  detail: string;
+}
+
+export interface HealthReport {
+  levels: HealthLevel[];
+  warnings: { key: string; title: string; detail: string }[];
+  healthy: boolean;
+  simulated: boolean;
+  checkedAt: string;
 }

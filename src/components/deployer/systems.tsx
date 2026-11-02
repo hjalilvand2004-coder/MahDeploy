@@ -4,12 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Boxes, Globe, FolderOpen, Play, Square, RotateCcw, Trash2, Eye, Loader2,
-  ScrollText, FileCode2, ServerCog, ExternalLink, ShieldAlert, Clock, Zip,
+  ScrollText, FileCode2, ServerCog, ExternalLink, ShieldAlert, Clock,
+  RefreshCcwDot, HeartPulse, History,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { GlassCard, StatusDot, CodeBlock, LiveConsole, fa, faTime } from "./bits";
 import { HelpButton } from "./help";
+import { UpdateDialog, HealthDialog, ReleasesDialog, type DeployRowLite } from "./ops-panels";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { GeneratedScript, StepState } from "@/lib/types";
@@ -17,9 +19,10 @@ import type { GeneratedScript, StepState } from "@/lib/types";
 interface DeployRow {
   id: string; name: string; displayName: string; domain: string;
   backendPort: number; sourceType: string; sourcePath: string | null;
-  deployPath: string; sslCertPath: string; sslKeyPath: string; nginxPath: string;
+  deployBase?: string; deployPath: string; sslCertPath: string; sslKeyPath: string; nginxPath: string;
   status: string; statusDetail: string | null; lastDeployedAt: string | null;
   createdAt: string; lastRunId: string | null; lastRunStatus: string | null;
+  lastRunKind?: string | null; activeReleaseTag?: string | null; releaseCount?: number;
 }
 
 interface RunDetail {
@@ -43,6 +46,20 @@ const STATUS_FA: Record<string, string> = {
   removed: "حذف‌شده",
 };
 
+function toLite(d: DeployRow | null): DeployRowLite | null {
+  if (!d) return null;
+  return {
+    id: d.id,
+    name: d.name,
+    displayName: d.displayName,
+    domain: d.domain,
+    backendPort: d.backendPort,
+    deployBase: d.deployBase ?? d.deployPath.replace(/[\\/]+$/, "").replace(/\\[^\\]+$/, ""),
+    deployPath: d.deployPath,
+    activeReleaseTag: d.activeReleaseTag ?? null,
+  };
+}
+
 export function SystemsTab({ refreshKey }: { refreshKey: number }) {
   const [deployments, setDeployments] = useState<DeployRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,6 +70,9 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
   const [acting, setActing] = useState<string | null>(null);
   const [removeTarget, setRemoveTarget] = useState<DeployRow | null>(null);
   const [openScript, setOpenScript] = useState<string | null>(null);
+  const [updateTarget, setUpdateTarget] = useState<DeployRow | null>(null);
+  const [healthTarget, setHealthTarget] = useState<DeployRow | null>(null);
+  const [releasesTarget, setReleasesTarget] = useState<DeployRow | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -181,6 +201,12 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
                   <span className="text-muted-foreground flex items-center gap-1.5"><FolderOpen className="w-3 h-3" /> پوشه استقرار</span>
                   <span className="font-mono text-[10px] truncate max-w-[160px]" dir="ltr">{d.deployPath}</span>
                 </div>
+                {d.activeReleaseTag ? (
+                  <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5">
+                    <span className="text-muted-foreground flex items-center gap-1.5"><History className="w-3 h-3" /> نسخه فعال</span>
+                    <span className="font-mono text-[10px]" dir="ltr">{d.activeReleaseTag}</span>
+                  </div>
+                ) : null}
                 <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5">
                   <span className="text-muted-foreground flex items-center gap-1.5"><Clock className="w-3 h-3" /> آخرین استقرار</span>
                   <span className="font-bold">{d.lastDeployedAt ? faTime(d.lastDeployedAt) : "—"}</span>
@@ -193,6 +219,21 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
                   className="flex-1 h-9 rounded-lg bg-violet-500/15 border border-violet-400/30 text-violet-200 text-[11px] font-bold hover:bg-violet-500/25 transition-colors flex items-center justify-center gap-1.5"
                 >
                   <Eye className="w-3.5 h-3.5" /> جزئیات
+                </button>
+                <button
+                  onClick={() => setUpdateTarget(d)}
+                  disabled={d.status === "planned"}
+                  title="استقرار نسخه جدید (به‌روزرسانی)"
+                  className="h-9 px-2.5 rounded-lg bg-teal-500/15 border border-teal-400/30 text-teal-200 text-[11px] font-bold hover:bg-teal-500/25 transition-colors flex items-center gap-1.5 disabled:opacity-40"
+                >
+                  <RefreshCcwDot className="w-3.5 h-3.5" /> به‌روزرسانی
+                </button>
+                <button
+                  onClick={() => setHealthTarget(d)}
+                  title="بررسی سلامت چندسطحی"
+                  className="h-9 w-9 rounded-lg border border-white/10 bg-white/[0.03] flex items-center justify-center text-muted-foreground hover:text-rose-300 hover:border-rose-400/30 transition-colors"
+                >
+                  <HeartPulse className="w-3.5 h-3.5" />
                 </button>
                 {d.status === "active" ? (
                   <button
@@ -258,6 +299,7 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
                 <Tabs defaultValue="run" dir="rtl" className="mt-2 min-w-0 w-full">
                   <TabsList className="bg-white/[0.04] border border-white/10 h-auto p-1 flex-wrap">
                     <TabsTrigger value="run" className="text-xs data-[state=active]:bg-violet-500/25">خروجی استقرار</TabsTrigger>
+                    <TabsTrigger value="releases" className="text-xs data-[state=active]:bg-violet-500/25">نسخه‌ها</TabsTrigger>
                     <TabsTrigger value="scripts" className="text-xs data-[state=active]:bg-violet-500/25">اسکریپت‌های PowerShell</TabsTrigger>
                     <TabsTrigger value="nginx" className="text-xs data-[state=active]:bg-violet-500/25">کانفیگ Nginx</TabsTrigger>
                     <TabsTrigger value="events" className="text-xs data-[state=active]:bg-violet-500/25">رویدادها</TabsTrigger>
@@ -293,6 +335,37 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
                       </div>
                     ))}
                     {!run && <p className="text-xs text-muted-foreground py-4 text-center">رکورد اجرایی برای این سامانه یافت نشد</p>}
+                  </TabsContent>
+
+                  <TabsContent value="releases" className="mt-3">
+                    <div className="space-y-2">
+                      <p className="text-[11px] text-muted-foreground leading-5">
+                        تاریخچهٔ نسخه‌های مستقرشده. برای بازگشت سریع به نسخه‌ای سالم، دکمهٔ «بازگشت به این نسخه» را بزنید —
+                        بازگشت فقط «کد» را برمی‌گرداند و تغییرات دیتابیس خودکار برنمی‌گردد.
+                      </p>
+                      {detail.activeReleaseTag && (
+                        <div className="flex items-center justify-between rounded-lg bg-emerald-400/[0.06] border border-emerald-400/20 px-3 py-2 text-[11px]">
+                          <span className="text-emerald-200">نسخهٔ فعال فعلی</span>
+                          <span className="font-mono" dir="ltr">{detail.activeReleaseTag}</span>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => {
+                            setReleasesTarget(detail);
+                          }}
+                          className="h-10 rounded-xl bg-violet-500/15 border border-violet-400/30 text-violet-200 text-xs font-bold hover:bg-violet-500/25 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <History className="w-4 h-4" /> مشاهده و بازگشت نسخه‌ها
+                        </button>
+                        <button
+                          onClick={() => setUpdateTarget(detail)}
+                          className="h-10 rounded-xl bg-teal-500/15 border border-teal-400/30 text-teal-200 text-xs font-bold hover:bg-teal-500/25 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <RefreshCcwDot className="w-4 h-4" /> استقرار نسخهٔ جدید
+                        </button>
+                      </div>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="scripts" className="mt-3 space-y-2.5">
@@ -354,6 +427,28 @@ export function SystemsTab({ refreshKey }: { refreshKey: number }) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ops dialogs */}
+      <UpdateDialog
+        target={toLite(updateTarget)}
+        open={!!updateTarget}
+        onOpenChange={(o) => !o && setUpdateTarget(null)}
+        onDone={() => {
+          load();
+          setUpdateTarget(null);
+        }}
+      />
+      <HealthDialog
+        target={toLite(healthTarget)}
+        open={!!healthTarget}
+        onOpenChange={(o) => !o && setHealthTarget(null)}
+      />
+      <ReleasesDialog
+        target={toLite(releasesTarget)}
+        open={!!releasesTarget}
+        onOpenChange={(o) => !o && setReleasesTarget(null)}
+        onDone={() => load()}
+      />
 
       {/* remove confirm */}
       <Dialog open={!!removeTarget} onOpenChange={(o) => !o && setRemoveTarget(null)}>

@@ -4,6 +4,7 @@ import os from "os";
 import path from "path";
 import { SIMULATION, type DeployConfig } from "@/lib/types";
 import { runSimulatedStep, runSimulatedServiceAction } from "@/lib/simulator";
+import { scrubSecrets } from "@/lib/failure-analysis";
 
 export interface StepResult {
   ok: boolean;
@@ -29,7 +30,9 @@ export async function executeStep(
       const res = await runSimulatedServiceAction(action, cfg, onLine);
       return { ...res, durationMs: Date.now() - startedAt, simulated: true };
     }
-    const res = await runSimulatedStep(stepId, cfg, onLine);
+    // rollback-<tag> simulates the generic rollback flow
+    const simId = stepId.startsWith("rollback") ? "rollback" : stepId;
+    const res = await runSimulatedStep(simId, cfg, onLine);
     return { ...res, durationMs: Date.now() - startedAt, simulated: true };
   }
 
@@ -49,8 +52,10 @@ export async function executeStep(
     const push = (buf: Buffer) => {
       for (const line of buf.toString("utf8").split(/\r?\n/)) {
         if (line.trim()) {
-          output.push(line);
-          onLine(line);
+          // never leak passwords/tokens/secrets into the terminal or the DB
+          const safe = scrubSecrets(line);
+          output.push(safe);
+          onLine(safe);
         }
       }
     };

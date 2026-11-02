@@ -31,6 +31,9 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     sslCertPath: d.sslCertPath,
     sslKeyPath: d.sslKeyPath,
     nginxPath: d.nginxPath,
+    uploadLimitMb: d.uploadLimitMb,
+    proxyTimeoutSec: d.proxyTimeoutSec,
+    blockDocs: d.blockDocs,
   });
 
   return NextResponse.json({

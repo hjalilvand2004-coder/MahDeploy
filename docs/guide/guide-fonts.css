@@ -1,4 +1,8 @@
 /* ================= local fonts ================= */
+/* B Mitra — primary document font (per MahAI branding) */
+@font-face{font-family:'B Mitra';src:url('fonts/Bmitra.ttf') format('truetype');font-weight:400;font-style:normal;}
+@font-face{font-family:'B Mitra';src:url('fonts/BmitraBd.ttf') format('truetype');font-weight:700;font-style:normal;}
+/* Vazirmatn — fallback + numerals */
 @font-face{font-family:'Vazirmatn';src:url('fonts/Vazirmatn-Light.ttf') format('truetype');font-weight:300;font-style:normal;}
 @font-face{font-family:'Vazirmatn';src:url('fonts/Vazirmatn-Regular.ttf') format('truetype');font-weight:400;font-style:normal;}
 @font-face{font-family:'Vazirmatn';src:url('fonts/Vazirmatn-Medium.ttf') format('truetype');font-weight:500;font-style:normal;}
@@ -7,4 +11,3 @@
 @font-face{font-family:'Vazirmatn';src:url('fonts/Vazirmatn-Black.ttf') format('truetype');font-weight:900;font-style:normal;}
 @font-face{font-family:'JetBrains Mono';src:url('fonts/JetBrainsMono-Regular.ttf') format('truetype');font-weight:400;font-style:normal;}
 @font-face{font-family:'JetBrains Mono';src:url('fonts/JetBrainsMono-Bold.ttf') format('truetype');font-weight:700;font-style:normal;}
-

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>راهنمای جامع کاربر — استقراربان (MahDeploy)</title>
+<link rel="stylesheet" href="guide-fonts.css">
 <style>
 
 /* ================= page & base ================= */
@@ -28,8 +29,8 @@ html,body{
   margin:0;padding:0;width:794px;
   background:var(--c-bg);
   color:var(--c-text);
-  font-family:'Vazirmatn','Tahoma',sans-serif;
-  font-size:14.5px;line-height:1.9;
+  font-family:'B Mitra','Vazirmatn','Tahoma',sans-serif;
+  font-size:17px;line-height:2;
   -webkit-font-smoothing:antialiased;
 }
 @media screen{
@@ -255,7 +256,7 @@ tr{break-inside:avoid;}
     <div class="glow2"></div>
   </div>
   <div class="content">
-    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.2.0</div>
+    <div class="kicker">MAHDEPLOY&nbsp;&nbsp;|&nbsp;&nbsp;USER&nbsp;GUIDE&nbsp;&nbsp;|&nbsp;&nbsp;V1.3.0</div>
     <div class="brand">
       <div class="fa-name">استقرار<em>بان</em></div>
       <div class="latin">MahDeploy — FastAPI + React Deployer for Windows Server</div>
@@ -263,19 +264,26 @@ tr{break-inside:avoid;}
     <div class="doc-type">راهنمای جامع کاربر</div>
     <div class="summary">
       استقرار استاندارد و خودکار اپلیکیشن‌های FastAPI + React روی ویندوز سرور؛ با پیش‌بررسی کامل
-      دامنه، پورت و گواهی SSL، اسکریپت‌های استاندارد PowerShell، وب‌سرور Nginx و سرویس ویندوز —
-      همه در یک پنل فارسی و شیشه‌ای. این راهنما گام‌به‌گام تمام بخش‌های سامانه را توضیح می‌دهد.
+      دامنه، پورت و گواهی SSL، اسکریپت‌های استاندارد PowerShell، وب‌سرور Nginx و سرویس ویندوز.
+      در نسخه ۱.۳.۰ سه قابلیت بزرگ اضافه شده است: گزارش دقیق خطا با علت و راه‌حل پیشنهادی،
+      بررسی سلامت چندسطحی سامانه‌های مستقرشده و به‌روزرسانی با نسخه‌بندی + بازگشت سریع به نسخهٔ سالم.
     </div>
     <div class="meta">
-      <span class="pill">نسخه سند: <b>۱.۲.۰</b></span>
+      <span class="pill">نسخه سند: <b>۱.۳.۰</b></span>
       <span class="pill">تاریخ انتشار: <b>آبان ۱۴۰۵</b></span>
       <span class="pill">مخاطب: <b>مدیران سرور و تیم‌های فنی</b></span>
       <span class="pill">سیستم‌عامل: <b>Windows Server 2016+</b></span>
     </div>
     <div class="rule"></div>
-    <div class="footer">
-      <span>سند رسمی محصول — همراه پکیج پرتابل</span>
-      <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
+    <div class="footer" style="flex-direction:column;gap:8px;bottom:48px;">
+      <span style="display:flex;width:100%;justify-content:space-between;align-items:center;">
+        <span>سند رسمی محصول — همراه پکیج پرتابل</span>
+        <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
+      </span>
+      <span style="display:flex;width:100%;justify-content:space-between;align-items:center;">
+        <span style="color:var(--c-accent-soft);">تهیه شده توسط شرکت ماه افزارهوشمند رسا</span>
+        <span class="mono" style="color:var(--c-accent);">MahAI.ir</span>
+      </span>
     </div>
   </div>
 </div>
@@ -290,9 +298,9 @@ tr{break-inside:avoid;}
   <div class="row"><span class="num">۲</span><span class="t"><span class="tt">اجرا و راه‌اندازی</span><br><span class="ts">اجرای پکیج پرتابل، ثبت سرویس ویندوز و نخستین ورود</span></span><span class="pg" id="toc-ch2">۲</span></div>
   <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۳</span></div>
   <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۴</span></div>
-  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">کنترل سریع سرویس‌ها، شروع/توقف/ری‌استارت، جزئیات و حذف کامل</span></span><span class="pg" id="toc-ch5">۵</span></div>
-  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۶</span></div>
-  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل</span></span><span class="pg" id="toc-ch7">۷</span></div>
+  <div class="row"><span class="num">۵</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch5">۵</span></div>
+  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch6">۶</span></div>
+  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch7">۷</span></div>
 
   <p class="note">
     در خود پنل نیز هر صفحه دکمه «راهنما» دارد که توضیح همان بخش را همین‌جا و بدون خروج از پنل نمایش می‌دهد؛
@@ -329,6 +337,8 @@ tr{break-inside:avoid;}
     <div class="card"><h4><span class="dot"></span>سرویس ویندوز با WinSW</h4><p>بک‌اند FastAPI به‌عنوان سرویس ویندوز ثبت می‌شود؛ با بوت سرور بالا می‌آید و در صورت کرش، خودکار دوباره اجرا می‌گردد.</p></div>
     <div class="card"><h4><span class="dot"></span>پایش زنده سرور</h4><p>مصرف CPU، رم و دیسک، وضعیت Nginx و نقشه کامل پورت‌های اشغال‌شده، هر ۴ ثانیه به‌روزرسانی می‌شود.</p></div>
     <div class="card"><h4><span class="dot"></span>مدیریت چرخه حیات</h4><p>شروع، توقف، ری‌استارت و حذف کامل هر سامانه مستقرشده — همراه با آرشیو لاگ‌ها و پاک‌سازی کانفیگ‌ها.</p></div>
+    <div class="card"><h4><span class="dot"></span>گزارش خطای قابل ردیابی</h4><p>اگر هر اسکریپتی در اجرا خطا بدهد، پنل متن خطا، علت احتمالی و راه‌حل‌های پیشنهادی فارسی را کنار همان مرحله نشان می‌دهد و در تاریخچه رویدادها ثبت می‌کند.</p></div>
+    <div class="card"><h4><span class="dot"></span>به‌روزرسانی بدون دلهره</h4><p>نسخه جدید کنار نسخه فعال آماده و تست می‌شود و نسخهٔ فعال تا سوییچ نهایی دست‌نخورده می‌ماند؛ با تاریخچه نسخه‌ها، بازگشت سریع به نسخهٔ سالم همیشه ممکن است.</p></div>
   </div>
 
   <div class="flow">
@@ -456,13 +466,23 @@ tr{break-inside:avoid;}
 
   <div class="step-row"><span class="n">۵</span><div class="t"><div class="tt">اجرا و گزارش زنده</div><div class="tx">چک‌باکس تأیید را بزنید و «اجرای استقرار» را کلیک کنید. اسکریپت‌ها با دسترسی Administrator به‌ترتیب اجرا می‌شوند و هر خط خروجی، همان لحظه در ترمینال رنگ‌بندی‌شده دیده می‌شود (سبز موفق، زرد هشدار، قرمز خطا). با کلیک روی هر مرحله در ستون کناری، کد کامل همان اسکریپت باز می‌شود. در پایان موفق، لینک مستقیم <span class="inline-code">https://دامنه</span>، نام سرویس و مسیر کانفیگ Nginx نمایش داده می‌شود و کارت سامانه در تب «سامانه‌ها» ثبت می‌گردد.</div></div></div>
 
+  <div class="callout warn"><b>اگر مرحله‌ای خطا بدهد (جدید در ۱.۳.۰):</b> پنل اجرا همان‌جا متوقف می‌شود و به‌جای یک خروجی خام، کارت «تحلیل خطا» باز می‌شود که سه بخش دارد:
+  <b>۱) متن خطا</b> — آخرین خطوط قرمز [FAIL] همان مرحله، عیناً از خروجی اسکریپت؛
+  <b>۲) علت احتمالی</b> — جملهٔ فارسی و قابل فهم (مثلاً «فایل ZIP خراب یا ناقص آپلود شده است» یا «کلید خصوصی با گواهی SSL مطابقت ندارد»)؛
+  <b>۳) راه‌حل‌های پیشنهادی</b> — گام‌به‌گام، متناسب با همان خطا.
+  دکمه «تلاش دوباره از مرحلهٔ ناموفق» هم وجود دارد که مراحل موفق قبلی را تکرار نمی‌کند. متن کامل خطا + علت، در رویدادهای همان سامانه هم ثبت می‌شود تا بعداً قابل ردیابی باشد.</div>
+
+  <p class="body-text">
+    دو نکتهٔ امنیتی دربارهٔ خروجی اسکریپت‌ها: اول اینکه <b>اطلاعات حساس</b> (پسورد، توکن، کلید API و مقادیر مشابه که در خروجی اسکریپت‌ها ظاهر شوند) پیش از نمایش و پیش از ثبت در دیتابیس پنل، به‌صورت خودکار با *** ماسک می‌شوند؛ دوم اینکه گزارش کامل و بدون فیلتر هر مرحله در فایل ترنسکریپت همان مرحله روی سرور (<span class="inline-code">C:\ProgramData\DeployGuard\logs</span>) ذخیره می‌شود — برای پیوست‌کردن به گزارش خطا، مسیر فایل در همان خروجی نمایش داده شده است.
+  </p>
+
   <div class="callout ok"><b>فلسفه استقراربان:</b> تا همه بررسی‌ها سبز نشوند هیچ خطی روی سرور اجرا نمی‌شود؛ و پیش از اجرا هم همه‌چیز با چشم خودتان قابل بازبینی است.</div>
 
   <!-- ═══════ فصل ۵ ═══════ -->
   <div class="chapter-header" id="ch5">
     <span class="ch-tag">CHAPTER 05</span>
     <h2>مدیریت سامانه‌های مستقرشده</h2>
-    <p class="lead">چرخه حیات سامانه‌ها پس از استقرار: کنترل سریع سرویس‌ها، وضعیت، عملیات سرویس، جزئیات فنی و حذف کامل.</p>
+    <p class="lead">چرخه حیات پس از استقرار: سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت، کنترل سرویس‌ها، جزئیات فنی و حذف کامل.</p>
     <div class="divider"></div>
   </div>
 
@@ -483,6 +503,51 @@ tr{break-inside:avoid;}
     </tbody>
   </table>
 
+  <h3 style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">بررسی سلامت چندسطحی — باز بودن پورت یعنی سالم؟</h3>
+  <p class="body-text">
+    باز بودن پورت فقط نشان می‌دهد چیزی روی آن پورت گوش می‌دهد؛ نه اینکه سامانه واقعاً کار کند. برای همین دکمهٔ
+    <b>«بررسی سلامت چندسطحی»</b> روی کارت هر سامانه، زنجیرهٔ کامل را از داخل به بیرون تست می‌کند و علاوه بر آن،
+    چند هشدار نگهداری هم می‌دهد. نتیجه به‌صورت فهرست رنگی (سبز/زرد/قرمز) با توضیح هر سطح نمایش داده می‌شود:
+  </p>
+
+  <table>
+    <thead><tr><th style="width:26%;">سطح بررسی</th><th>دقیقاً چه چیزی تست می‌شود</th></tr></thead>
+    <tbody>
+      <tr><td><b>سرویس ویندوز</b></td><td>سرویس <span class="tdcode">deployguard-&lt;name&gt;</span> در حال اجراست؟ (نه فقط پورت — خود سرویس)</td></tr>
+      <tr><td><b>بک‌اند</b></td><td>مسیر <span class="tdcode">/health</span> بک‌اند روی ۱۲۷.۰.۰.۱ پاسخ HTTP ۲۰۰ می‌دهد؟</td></tr>
+      <tr><td><b>دیتابیس</b></td><td>در پاسخ سلامت اپ، اتصال دیتابیس «connected» گزارش شده؟ (وابستگی‌های ضروری)</td></tr>
+      <tr><td><b>Nginx و کانفیگ دامنه</b></td><td>سرویس Nginx فعال است و فایل کانفیگ اختصاصی همین دامنه وجود دارد؟</td></tr>
+      <tr><td><b>HTTPS از مسیر دامنه</b></td><td>درخواست واقعی از <span class="tdcode">https://دامنه</span> پاسخ می‌دهد؟ (کل زنجیرهٔ Nginx + SSL + بک‌اند)</td></tr>
+      <tr><td><b>هشدارها</b></td><td>فضای دیسک، تاریخ انقضای گواهی SSL (کمتر از ۳۰ روز = زرد) و حجم لاگ‌ها (بیش از ۵۰۰ مگابایت = زرد)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout tip"><b>چرخش لاگ‌ها:</b> دکمهٔ «چرخش لاگ‌ها» در همان پنجرهٔ سلامت، لاگ‌های بزرگ هر سامانه را به آرشیو تاریخ‌دار منتقل می‌کند تا دیسک پر نشود؛ برای خودکاری‌سازی هم می‌توانید در ویندوز Task Schedule بسازید که اسکریپت تولیدشدهٔ «چرخش لاگ» را هفتگی اجرا کند.</div>
+
+  <h3 style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم</h3>
+  <p class="body-text">
+    دکمهٔ <b>«به‌روزرسانی»</b> روی کارت هر سامانه، ویزاردی شش‌مرحله‌ای (مشابه استقرار اولیه) باز می‌کند با یک تفاوت کلیدی:
+    نسخهٔ جدید در پوشهٔ جدا <span class="inline-code">releases\&lt;tag&gt;</span> آماده می‌شود و <b>نسخهٔ فعال تا مرحلهٔ سوییچ نهایی
+    دست‌نخورده و در سرویس باقی می‌ماند</b> — اگر در آماده‌سازی یا تست نسخه جدید به مشکل بخورید، سایت کاربران هیچ وقفه‌ای نمی‌بیند.
+  </p>
+
+  <div class="codeblock">
+    <div class="cb-head">versioned layout — C:\deployments\&lt;name&gt;</div>
+    <pre>C:\deployments\docs-manager\
+├── releases\           <span class="c">← هر به‌روزرسانی یک پوشهٔ تاریخ‌دار</span>
+│   ├── 20260102-093000\   <span class="g">← نسخه فعال (backend + www)</span>
+│   └── 20260210-141500\   <span class="c">← نسخه‌های قبلی — برای بازگشت حفظ می‌شوند</span>
+├── logs\           <span class="c">← لاگ‌ها مشترک و پیوسته</span>
+└── scripts\        <span class="c">← اسکریپت‌های آخرین پلن</span></pre>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h4><span class="dot"></span>تاریخچه نسخه‌ها</h4><p>در پنجره جزئیات، تب «نسخه‌ها» فهرست همه نسخه‌ها را با تاریخ، وضعیت (فعال/قبلی/معلق) و موجودبودن روی دیسک نشان می‌دهد؛ خروجی کامل هر استقرار هم در همان پنجره قابل مرور است.</p></div>
+    <div class="card"><h4><span class="dot"></span>بازگشت سریع (Rollback)</h4><p>اگر نسخه جدید مشکل داشت، از تب «نسخه‌ها» دکمهٔ «بازگشت به این نسخه» را بزنید: سوییچ کانفیگ به نسخهٔ سالم + ری‌استارت سرویس، در چند ثانیه — بدون استقرار مجدد از ZIP.</p></div>
+    <div class="card"><h4><span class="dot"></span>اجرای ایمن و مجدد</h4><p>هر اسکریپت «ایده‌مپوتنت» نوشته شده: اجرای مجدد مرحلهٔ ناموفق، چیزی را خراب یا تکراری نمی‌کند. تغییر کانفیگ مشترک Nginx هم با قفل انجام می‌شود تا دو استقرار هم‌زمان کانفیگ هم را خراب نکنند.</p></div>
+    <div class="card"><h4><span class="dot"></span>محدودهٔ بازگشت</h4><p>بازگشت، «کد» را برمی‌گرداند؛ تغییرات اسکیمای دیتابیس خودکار برنمی‌گردد — برای دیتابیس، مهاجرت جداگانه بگیرید (بکاپ قبل از به‌روزرسانی) و کانفیگ‌های محیطی را در نسخهٔ بازگشتی بررسی کنید.</p></div>
+  </div>
+
   <p class="body-text">
     تب «سرویس‌ها» ساده‌ترین جای پنل برای مدیریت روزمره است: فهرست همهٔ سامانه‌های مستقرشده با پورت بک‌اند و وضعیت
     زندهٔ هر کدام، همراه سه دکمه Start، Stop و Restart در همان ردیف. نشان سبز «روی پورت پاسخ می‌دهد» یعنی همین لحظه
@@ -493,13 +558,8 @@ tr{break-inside:avoid;}
   </p>
 
   <div class="grid2">
-    <div class="card"><h4><span class="dot"></span>Start / Stop / Restart</h4><p>Start سرویس متوقف را روشن می‌کند، Stop سرویس فعال را می‌ایستاند و Restart یک‌باره خاموش‌وروشن می‌کند (برای اعمال تغییرات کد بک‌اند). نتیجه با اعلان اعلام و فهرست بلافاصله تازه می‌شود.</p></div>
-    <div class="card"><h4><span class="dot"></span>کدام تب، برای کدام کار؟</h4><p>برای روشن/خاموش/ری‌استارت روزمره، تب «سرویس‌ها» سریع‌ترین راه است؛ برای دیدن خروجی استقرار، اسکریپت‌ها، کانفیگ Nginx، رویدادها و حذف کامل، به تب «سامانه‌ها» بروید.</p></div>
-  </div>
-
-  <div class="grid2">
     <div class="card"><h4><span class="dot"></span>شروع / توقف / ری‌استارت</h4><p>سه دکمه کنار کارت، سرویس ویندوز <span class="inline-code">deployguard-&lt;name&gt;</span> را مدیریت می‌کنند و نتیجه با اعلان (Toast) اعلام می‌شود. ری‌استارت برای اعمال تغییرات کد بک‌اند کافی است.</p></div>
-    <div class="card"><h4><span class="dot"></span>پنجره جزئیات</h4><p>چهار تب دارد: «خروجی استقرار» (نتیجه ۶ اسکریپت با لاگ هرکدام)، «اسکریپت‌های PowerShell» (کد کامل + کپی/دانلود)، «کانفیگ Nginx» (محتوای فایل conf) و «رویدادها» (لاگ‌های ثبت‌شده).</p></div>
+    <div class="card"><h4><span class="dot"></span>پنجره جزئیات</h4><p>پنج تب دارد: «خروجی استقرار» (نتیجه ۶ اسکریپت با لاگ هرکدام)، «نسخه‌ها» (تاریخچه + بازگشت)، «اسکریپت‌های PowerShell» (کد کامل + کپی/دانلود)، «کانفیگ Nginx» (محتوای فایل conf اختصاصی دامنه) و «رویدادها» (لاگ‌های ثبت‌شده).</p></div>
   </div>
 
   <div class="callout warn"><b>حذف کامل:</b> با تأیید دومرحله‌ای انجام می‌شود — سرویس ویندوز حذف، کانفیگ Nginx پاک و ریلود می‌شود، لاگ‌ها آرشیو و پوشه سامانه (شامل دیتابیس خودِ اپ) حذف می‌گردد. این عملیات برگشت‌پذیر نیست؛ پیش از آن از پوشه <span class="inline-code">logs</span> و داده‌ها پشتیبان بگیرید.</div>
@@ -517,6 +577,8 @@ tr{break-inside:avoid;}
   <div class="step-row"><span class="n">۳</span><div class="t"><div class="tt">شفافیت اسکریپت‌ها</div><div class="tx">اسکریپت‌های PowerShell پیش از اجرا نمایش داده می‌شوند و اجرای استقرار نیازمند تأیید صریح شماست. اسکریپت‌ها به‌طور موقت در <span class="inline-code">%TEMP%\deployguard</span> نوشته و پس از اجرا حذف می‌شوند.</div></div></div>
   <div class="step-row"><span class="n">۴</span><div class="t"><div class="tt">پشتیبان‌گیری</div><div class="tx">دیتابیس پنل یک فایل است: <span class="inline-code">data\mahdeploy.db</span> — کپی همین فایل (یا کل پوشه پکیج) یعنی پشتیبان کامل از کاربران، استقرارها و لاگ‌ها. برای سامانه‌های مستقرشده هم پوشه هر اپ را جداگانه پشتیبان بگیرید.</div></div></div>
   <div class="step-row"><span class="n">۵</span><div class="t"><div class="tt">به‌روزرسانی و انتقال</div><div class="tx">برای انتقال به سرور جدید، کافی است کل پوشه پکیج را کپی کنید — همه‌چیز (حتی نشست‌ها و تنظیمات) حفظ می‌شود. نسخه‌های جدید پکیج را از صفحه Releases مخزن گیت‌هاب دریافت کنید.</div></div></div>
+  <div class="step-row"><span class="n">۶</span><div class="t"><div class="tt">چرخش لاگ‌ها و پایش دوره‌ای</div><div class="tx">لاگ‌های هر سامانه در <span class="inline-code">logs</span> همان پوشه جمع می‌شوند؛ با دکمه «چرخش لاگ‌ها» (پنجره سلامت چندسطحی) لاگ‌های بزرگ به آرشیو تاریخ‌دار منتقل و فضا آزاد می‌شود. هفته‌ای یک‌بار «بررسی سلامت چندسطحی» را بزنید تا فضای دیسک، انقضای گواهی SSL (هشدار زیر ۳۰ روز) و حجم لاگ‌ها زیر نظر باشد.</div></div></div>
+  <div class="step-row"><span class="n">۷</span><div class="t"><div class="tt">به‌روزرسانی امن اپ‌های مستقرشده</div><div class="tx">برای ارتقای هر سامانه از دکمه «به‌روزرسانی» استفاده کنید — نه استقرار مجدد: نسخه فعال می‌ماند، نسخه جدید در releases\&lt;tag&gt; آماده و تست می‌شود و در صورت مشکل، «بازگشت به نسخه» در چند ثانیه کار می‌کند. قبل از هر به‌روزرسانی، از پوشه اپ و دیتابیس آن پشتیبان بگیرید؛ تغییرات اسکیمای دیتابیس با بازگشت خودکار برنمی‌گردد.</div></div></div>
 
   <div class="callout tip"><b>فایروال:</b> پنل هنگام استقرار، قاعده فایروال پورت بک‌اند را خودکار می‌سازد؛ برای خود پنل (پورت ۳۰۰۰) در صورت نیاز دستی اقدام کنید — دستور در فصل ۲ آمده است.</div>
 
@@ -524,7 +586,7 @@ tr{break-inside:avoid;}
   <div class="chapter-header" id="ch7">
     <span class="ch-tag">CHAPTER 07</span>
     <h2>عیب‌یابی و پرسش‌های رایج</h2>
-    <p class="lead">هفت حالت پرتکرار با علت و راه‌حل. برای ردیابی دقیق‌تر، لاگ‌ها بهترین دوست شما هستند: در پنل مسیر «سامانه‌ها ← جزئیات ← رویدادها» و روی دیسک پوشه logs پکیج و هر سامانه.</p>
+    <p class="lead">حالت‌های پرتکرار با علت و راه‌حل + راهنمای خواندن گزارش خطای پنل. برای ردیابی دقیق، لاگ‌ها بهترین دوست شما هستند: در پنل مسیر «سامانه‌ها ← جزئیات ← رویدادها» و روی دیسک پوشه logs پکیج و هر سامانه.</p>
     <div class="divider"></div>
   </div>
 
@@ -535,7 +597,11 @@ tr{break-inside:avoid;}
       <tr><td>بررسی دامنه قرمز است</td><td>رکورد A تنظیم نیست یا هنوز منتشر نشده</td><td>در پنل دامنه، رکورد A را روی IP سرور ثبت و پس از انتشار «بررسی مجدد» بگیرید</td></tr>
       <tr><td>بررسی پورت قرمز است</td><td>پورت انتخابی اشغال است</td><td>از دکمه پیشنهاد پورت آزاد استفاده کنید یا عدد دیگری بدهید</td></tr>
       <tr><td>اعتبارسنجی SSL شکست می‌خورد</td><td>مسیر فایل‌ها اشتباه است یا گواهی به دامنه تعلق ندارد</td><td>مسیر دقیق <span class="tdcode">.crt</span> و <span class="tdcode">.key</span> را کنترل و تطابق دامنه گواهی را بررسی کنید</td></tr>
-      <tr><td>استقرار وسط کار متوقف شد</td><td>شکست یکی از ۶ اسکریپت</td><td>خروجی قرمز همان مرحله را بخوانید؛ مشکل را رفع و پلن را دوباره اجرا کنید</td></tr>
+      <tr><td>استقرار وسط کار متوقف شد</td><td>شکست یکی از ۶ اسکریپت</td><td>کارت «تحلیل خطا» را بخوانید: متن خطا + علت + راه‌حل پیشنهادی؛ پس از رفع، «تلاش دوباره از مرحلهٔ ناموفق» را بزنید — مراحل موفق تکرار نمی‌شوند</td></tr>
+      <tr><td>به‌روزرسانی به مشکل خورد</td><td>خطا در آماده‌سازی یا سوییچ نسخه جدید</td><td>نسخه فعال دست‌نخورده باقی مانده؛ خروجی مرحله را بخوانید و دوباره تلاش کنید — یا از تب «نسخه‌ها» به نسخهٔ سالم برگردید</td></tr>
+      <tr><td>پیام «کانفیگ Nginx قفل است»</td><td>استقرار هم‌زمان دیگری در جریان است</td><td>یک دقیقه صبر کنید و دوباره تلاش کنید؛ قفل یتیم پس از ۱۰ دقیقه خودکار آزاد می‌شود</td></tr>
+      <tr><td>سلامت‌سنجی سطح دیتابیس زرد/قرمز است</td><td>اتصال دیتابیس اپ قطع یا کند است</td><td>لاگ بک‌اند و وضعیت سرویس دیتابیس را بررسی کنید؛ /health اپ باید database را connected گزارش کند</td></tr>
+      <tr><td>هشدار «گواهی SSL نزدیک انقضا»</td><td>گواهی کمتر از ۳۰ روز اعتبار دارد</td><td>گواهی جدید را در همان مسیر جایگزین و از تب «کانفیگ Nginx» یا ویزارد، کانفیگ را مجدد اعمال کنید</td></tr>
       <tr><td>سایت باز نمی‌شود ولی سرویس فعال است</td><td>فایروال یا کانفیگ Nginx</td><td>قاعده فایروال پورت ۴۴۳ و ۸۰ و فایل <span class="tdcode">conf.d\&lt;name&gt;.conf</span> را بررسی کنید</td></tr>
       <tr><td>رمز عبور را فراموش کردم</td><td>—</td><td>فایل <span class="tdcode">data\mahdeploy.db</span> را حذف کنید؛ پنل با رمز پیش‌فرض از نو راه‌اندازی می‌شود (تمام داده‌های پنل پاک می‌شود)</td></tr>
     </tbody>
@@ -566,18 +632,20 @@ tr{break-inside:avoid;}
   </div>
   <div class="content">
     <div class="brand-sm">استقرار<em>بان</em></div>
-    <div class="latin">MAHDEPLOY V1.2.0</div>
+    <div class="latin">MAHDEPLOY V1.3.0</div>
     <p class="tagline">
-      از پیش‌بررسی تا ترمینال زنده — استقرار استاندارد FastAPI + React روی ویندوز سرور،
-      بدون نصب هیچ پیش‌نیازی، با رابط فارسی و گزارش شفاف PowerShell.
+      از پیش‌بررسی تا ترمینال زنده، از گزارش دقیق خطا تا سلامت چندسطحی و بازگشت به نسخهٔ سالم —
+      استقرار استاندارد FastAPI + React روی ویندوز سرور، بدون نصب هیچ پیش‌نیازی، با رابط فارسی و گزارش شفاف PowerShell.
     </p>
     <div class="recap">
       <span class="pill">۱ · داشبورد سرور</span>
-      <span class="pill">۲ · ویزارد ۵ مرحله‌ای</span>
-      <span class="pill">۳ · مدیریت سامانه‌ها</span>
+      <span class="pill">۲ · ویزارد استقرار و به‌روزرسانی</span>
+      <span class="pill">۳ · سلامت چندسطحی</span>
+      <span class="pill">۴ · نسخه‌بندی و بازگشت</span>
     </div>
     <div class="meta-line">
-      سند رسمی راهنمای کاربر — نسخه ۱.۲.۰ — آبان ۱۴۰۵<br>
+      سند رسمی راهنمای کاربر — نسخه ۱.۳.۰ — آبان ۱۴۰۵ — فونت سند: B Mitra<br>
+      تهیه شده توسط شرکت ماه افزارهوشمند رسا — <span class="mono">MahAI.ir</span><br>
       <span class="mono">github.com/hjalilvand2004-coder/MahDeploy</span>
     </div>
     <div class="rule"></div>

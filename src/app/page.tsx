@@ -316,6 +316,19 @@ export default function Home() {
             <span>{fa(deployments.filter((d) => d.status === "active").length)} سامانه فعال</span>
           </span>
         </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground/80">
+          <span>تهیه شده توسط</span>
+          <span className="font-bold text-violet-300/90">شرکت ماه افزارهوشمند رسا</span>
+          <a
+            href="https://MahAI.ir"
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold text-gradient hover:opacity-80 transition-opacity"
+            dir="ltr"
+          >
+            MahAI.ir
+          </a>
+        </div>
       </footer>
 
       {/* settings dialog */}

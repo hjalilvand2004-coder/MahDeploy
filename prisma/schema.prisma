@@ -16,25 +16,42 @@ model Setting {
 }
 
 model Deployment {
-  id             String    @id @default(cuid())
-  name           String    @unique
-  displayName    String
-  domain         String
-  backendPort    Int
-  sourceType     String
-  sourcePath     String?
-  deployBase     String
-  deployPath     String
-  sslCertPath    String
-  sslKeyPath     String
-  nginxPath      String
-  status         String    @default("planned")
-  statusDetail   String?
-  lastDeployedAt DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  logs           LogEntry[]
-  runs           DeployRun[]
+  id              String    @id @default(cuid())
+  name            String    @unique
+  displayName     String
+  domain          String
+  backendPort     Int
+  sourceType      String
+  sourcePath      String?
+  deployBase      String
+  deployPath      String
+  sslCertPath     String
+  sslKeyPath      String
+  nginxPath       String
+  uploadLimitMb   Int       @default(100)
+  proxyTimeoutSec Int       @default(120)
+  blockDocs       Boolean   @default(false)
+  status          String    @default("planned")
+  statusDetail    String?
+  lastDeployedAt  DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  logs            LogEntry[]
+  runs            DeployRun[]
+  releases        Release[]
+}
+
+model Release {
+  id           String     @id @default(cuid())
+  deploymentId String
+  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  tag          String
+  path         String
+  status       String     @default("staged")
+  runId        String?
+  note         String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model LogEntry {

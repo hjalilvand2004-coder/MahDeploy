@@ -135,6 +135,12 @@ export function LoginScreen({
         <p className="text-center text-[11px] text-muted-foreground/60 mt-5">
           برای اجرای عملیات مدیریتی، پنل را در PowerShell با دسترسی Administrator اجرا کنید
         </p>
+        <p className="text-center text-[11px] text-muted-foreground/70 mt-2">
+          تهیه شده توسط <b className="text-violet-300/90">شرکت ماه افزارهوشمند رسا</b> —{" "}
+          <a href="https://MahAI.ir" target="_blank" rel="noreferrer" className="font-bold text-gradient" dir="ltr">
+            MahAI.ir
+          </a>
+        </p>
       </motion.div>
     </div>
   );

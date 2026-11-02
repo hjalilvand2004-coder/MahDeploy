@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { executeStep } from "@/lib/executor";
+import { analyzeFailure } from "@/lib/failure-analysis";
 import type { DeployConfig, StepState } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -42,6 +43,9 @@ export async function POST(req: NextRequest) {
     sslCertPath: deployment.sslCertPath,
     sslKeyPath: deployment.sslKeyPath,
     nginxPath: deployment.nginxPath,
+    uploadLimitMb: deployment.uploadLimitMb,
+    proxyTimeoutSec: deployment.proxyTimeoutSec,
+    blockDocs: deployment.blockDocs,
   };
 
   // mark running
@@ -64,6 +68,10 @@ export async function POST(req: NextRequest) {
   steps[stepIndex].output = result.output;
   steps[stepIndex].durationMs = result.durationMs;
   steps[stepIndex].status = result.ok ? "success" : "failed";
+  if (!result.ok) {
+    // attach an automatic cause + suggested fixes so the operator can trace the failure
+    steps[stepIndex].analysis = analyzeFailure(result.output, result.error);
+  }
 
   const allDone = steps.every((s) => s.status === "success");
   const anyFailed = steps.some((s) => s.status === "failed");
@@ -72,6 +80,25 @@ export async function POST(req: NextRequest) {
     where: { id: run.id },
     data: { steps: JSON.stringify(steps), status: allDone ? "success" : anyFailed ? "failed" : "running" },
   });
+
+  // keep staged release rows in sync with the update plan progress
+  if (run.kind === "update") {
+    const release = await db.release.findFirst({ where: { runId: run.id } });
+    if (release) {
+      const stepId = steps[stepIndex].id;
+      if (allDone) {
+        await db.release.update({ where: { id: release.id }, data: { status: "active" } });
+        await db.release.updateMany({
+          where: { deploymentId: deployment.id, id: { not: release.id }, status: "active" },
+          data: { status: "previous" },
+        });
+      } else if (anyFailed && (stepId === "update-switch" || stepId === "update-verify")) {
+        await db.release.update({ where: { id: release.id }, data: { status: "failed" } });
+      } else if (!anyFailed) {
+        await db.release.update({ where: { id: release.id }, data: { status: "staged" } });
+      }
+    }
+  }
 
   await db.deployment.update({
     where: { id: deployment.id },
@@ -89,7 +116,7 @@ export async function POST(req: NextRequest) {
       step: steps[stepIndex].id,
       message: result.ok
         ? `مرحله «${steps[stepIndex].title}» در ${(result.durationMs / 1000).toFixed(1)} ثانیه با موفقیت اجرا شد`
-        : `مرحله «${steps[stepIndex].title}» ناموفق بود: ${result.error ?? "خطای نامشخص"}`,
+        : `مرحله «${steps[stepIndex].title}» ناموفق بود: ${steps[stepIndex].analysis?.cause ?? result.error ?? "خطای نامشخص"}`,
     },
   });
 

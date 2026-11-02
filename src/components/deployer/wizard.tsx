@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Rocket, Globe, FolderCog, FileCheck2, PlayCircle, CheckCircle2, XCircle,
   Loader2, Upload, FolderInput, RefreshCw, Wand2, ChevronLeft, ExternalLink,
-  TerminalSquare, ShieldCheck, Info, Boxes, RotateCcw, Download,
+  TerminalSquare, ShieldCheck, Info, Boxes, RotateCcw, Download, ServerCog,
+  Lightbulb, AlertTriangle,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,9 @@ interface WizardConfig {
   nginxPath: string;
   sslCertPath: string;
   sslKeyPath: string;
+  uploadLimitMb: number;
+  proxyTimeoutSec: number;
+  blockDocs: boolean;
 }
 
 const DEFAULT_CONFIG: WizardConfig = {
@@ -39,6 +43,9 @@ const DEFAULT_CONFIG: WizardConfig = {
   nginxPath: "C:\\nginx",
   sslCertPath: "",
   sslKeyPath: "",
+  uploadLimitMb: 100,
+  proxyTimeoutSec: 120,
+  blockDocs: false,
 };
 
 const STEPS_META = [
@@ -283,6 +290,9 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
           sslCertPath: cfg.sslCertPath,
           sslKeyPath: cfg.sslKeyPath,
           nginxPath: cfg.nginxPath,
+          uploadLimitMb: cfg.uploadLimitMb,
+          proxyTimeoutSec: cfg.proxyTimeoutSec,
+          blockDocs: cfg.blockDocs,
         }),
       });
       const data = await res.json();
@@ -376,6 +386,7 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
 
   const deployPath = `${cfg.deployBase.replace(/[\\/]+$/, "")}\\${cfg.name || "app"}`;
   const serviceName = `deployguard-${cfg.name || "app"}`;
+  const isRunning = runStatus === "running";
 
   /* ================================================================ */
 
@@ -731,6 +742,64 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
                 </div>
               </div>
 
+              <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-xs font-bold mb-3 flex items-center gap-1.5">
+                  <ServerCog className="w-3.5 h-3.5 text-fuchsia-300" /> تنظیمات Nginx (قابل تغییر بعداً)
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <label className={labelCls}>حداکثر حجم آپلود (client_max_body_size)</label>
+                    <select
+                      className={inputCls}
+                      value={cfg.uploadLimitMb}
+                      onChange={(e) => set("uploadLimitMb", Number(e.target.value))}
+                    >
+                      {[10, 25, 50, 100, 200, 500].map((v) => (
+                        <option key={v} value={v} className="bg-[#0d1327]">{fa(v)} مگابایت</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelCls}>زمان انتظار پروکسی (timeout)</label>
+                    <select
+                      className={inputCls}
+                      value={cfg.proxyTimeoutSec}
+                      onChange={(e) => set("proxyTimeoutSec", Number(e.target.value))}
+                    >
+                      {[60, 120, 300, 600].map((v) => (
+                        <option key={v} value={v} className="bg-[#0d1327]">{fa(v)} ثانیه</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelCls}>مستندات API در محیط تولید (/docs)</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => set("blockDocs", false)}
+                        className={cn(
+                          "h-11 rounded-xl border text-xs font-bold transition-all",
+                          !cfg.blockDocs ? "border-violet-400/40 bg-violet-500/15 text-violet-200" : "border-white/10 bg-white/[0.03] text-muted-foreground"
+                        )}
+                      >
+                        باز
+                      </button>
+                      <button
+                        onClick={() => set("blockDocs", true)}
+                        className={cn(
+                          "h-11 rounded-xl border text-xs font-bold transition-all",
+                          cfg.blockDocs ? "border-rose-400/40 bg-rose-500/15 text-rose-200" : "border-white/10 bg-white/[0.03] text-muted-foreground"
+                        )}
+                      >
+                        مسدود
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-2 text-[10px] text-muted-foreground leading-5">
+                  سوکت‌های WebSocket همیشه پشتیبانی می‌شوند؛ مسیر /api با هدرهای پروکسی استاندارد و fallback ری‌اکت (بازکردن مستقیم صفحات داخلی بدون خطای ۴۰۴) تنظیم می‌شود. قبل از هر تغییر، از کانفیگ قبلی پشتیبان گرفته می‌شود و در صورت رد شدن nginx -t، کانفیگ قبلی خودکار بازیابی می‌گردد.
+                </p>
+              </div>
+
               <div className="mt-4 flex items-center gap-2">
                 <button
                   onClick={checkSsl}
@@ -917,12 +986,45 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
 
                 {runStatus === "failed" && (() => {
                   const failIdx = planSteps.findIndex((s) => s.status === "failed");
+                  const failedStep = failIdx >= 0 ? planSteps[failIdx] : null;
+                  const analysis = failedStep?.analysis;
                   return (
-                    <div className="mt-4 rounded-xl border border-rose-400/25 bg-rose-400/[0.07] p-4 text-xs text-rose-100 leading-5">
-                      <b>استقرار در مرحله بالا متوقف شد.</b> خروجی قرمز را بررسی کنید؛ مشکل سرور را رفع کنید و دوباره تلاش کنید — مراحل موفق تکرار نمی‌شوند و پلن نیازی به بازسازی ندارد.
+                    <div className="mt-4 rounded-xl border border-rose-400/25 bg-rose-400/[0.07] p-4 text-xs leading-5">
+                      <div className="flex items-center gap-2 font-black text-rose-200 mb-2">
+                        <XCircle className="w-4 h-4" />
+                        استقرار در مرحله «{failedStep?.title ?? "—"}» متوقف شد
+                      </div>
+
+                      {analysis && (
+                        <div className="space-y-2">
+                          <div className="rounded-lg bg-white/[0.04] border border-white/10 p-3">
+                            <div className="text-[10px] text-muted-foreground mb-1">علت احتمالی (تحلیل خودکار)</div>
+                            <div className="text-foreground font-bold">{analysis.cause}</div>
+                            {analysis.failLine && (
+                              <div className="mt-1.5 font-mono text-[10px] text-rose-300/90 break-all" dir="ltr">{analysis.failLine}</div>
+                            )}
+                          </div>
+                          {analysis.hints.length > 0 && (
+                            <div className="rounded-lg bg-amber-400/[0.06] border border-amber-300/20 p-3">
+                              <div className="text-[10px] text-amber-300/90 mb-1.5 flex items-center gap-1">
+                                <Lightbulb className="w-3 h-3" /> راهکار پیشنهادی
+                              </div>
+                              <ul className="space-y-1 text-[11px] text-amber-100/90 list-disc pr-4">
+                                {analysis.hints.map((h, i) => (
+                                  <li key={i}>{h}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <p className="text-rose-100/80 mt-2">
+                        خروجی کامل همین مرحله در ترمینال سمت چپ و لاگ ترنسکریپت در سرور موجود است — با دکمهٔ «کپی خروجی» آن را برای پشتیبانی بفرستید.
+                      </p>
                       <button
                         onClick={() => runPlan(Math.max(0, failIdx))}
-                        disabled={runStatus === "running"}
+                        disabled={isRunning}
                         className="mt-3 w-full h-10 rounded-xl bg-gradient-to-l from-amber-500 to-rose-500 text-white text-xs font-black shadow-lg shadow-rose-900/30 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-40"
                       >
                         <RotateCcw className="w-4 h-4" />
@@ -943,7 +1045,7 @@ export function DeployWizard({ onDeployed, simulation }: { onDeployed: () => voi
                     </label>
                     <button
                       onClick={() => runPlan()}
-                      disabled={!confirmed || runStatus === "running"}
+                      disabled={!confirmed || isRunning}
                       className="mt-3 w-full h-11 rounded-xl bg-gradient-to-l from-emerald-600 to-teal-500 text-white text-sm font-black shadow-xl shadow-emerald-900/30 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <Rocket className="w-4 h-4" />
