@@ -271,6 +271,12 @@ tr{break-inside:avoid;}
 .codeblock pre{margin:0;padding:11px 14px;direction:ltr;text-align:left;
   font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.8;color:#C8E8F8;overflow-wrap:break-word;white-space:pre-wrap;}
 .codeblock pre .c{color:#8B84B5;} .codeblock pre .g{color:#7DE8BC;}
+.codeblock.flow{break-inside:auto;}
+.codeblock.flow .cb-head{break-after:avoid;}
+.codeblock.sm pre{font-size:10px;line-height:1.55;padding:9px 13px;}
+.codeblock pre .ok{color:#7DE8BC;} .codeblock pre .w{color:#FCD34D;}
+.codeblock pre .f{color:#FB7185;} .codeblock pre .h{color:#C4B5FD;}
+
 
 /* ending page */
 .ending{width:794px;height:1123px;position:relative;break-before:page;overflow:hidden;}
@@ -348,9 +354,9 @@ tr{break-inside:avoid;}
   <div class="row"><span class="num">۳</span><span class="t"><span class="tt">داشبورد سلامت سرور</span><br><span class="ts">متریک‌های زنده، وضعیت Nginx، نقشه پورت‌ها و رویدادها</span></span><span class="pg" id="toc-ch3">۵</span></div>
   <div class="row"><span class="num">۴</span><span class="t"><span class="tt">ویزارد استقرار — گام‌به‌گام</span><br><span class="ts">پنج مرحله استقرار، بررسی‌های پیش‌نیاز و ترمینال زنده</span></span><span class="pg" id="toc-ch4">۶</span></div>
   <div class="row"><span class="num">۵</span><span class="t"><span class="tt">الگوهای اسکریپت‌های PowerShell</span><br><span class="ts">ترتیب اجرا، نام مرحلهٔ هر اسکریپت و دقیقاً چه کاری روی سرور انجام می‌دهد</span></span><span class="pg" id="toc-ch5">۸</span></div>
-  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch6">۱۳</span></div>
-  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch7">۱۵</span></div>
-  <div class="row"><span class="num">۸</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch8">۱۶</span></div>
+  <div class="row"><span class="num">۶</span><span class="t"><span class="tt">مدیریت سامانه‌های مستقرشده</span><br><span class="ts">سلامت چندسطحی، به‌روزرسانی نسخه‌دار و بازگشت به نسخهٔ سالم، کنترل سرویس‌ها و حذف کامل</span></span><span class="pg" id="toc-ch6">۱۸</span></div>
+  <div class="row"><span class="num">۷</span><span class="t"><span class="tt">امنیت و نگهداری</span><br><span class="ts">رمز عبور، فایروال، چرخش لاگ‌ها، پشتیبان‌گیری و دسترسی Administrator</span></span><span class="pg" id="toc-ch7">۲۰</span></div>
+  <div class="row"><span class="num">۸</span><span class="t"><span class="tt">عیب‌یابی و پرسش‌های رایج</span><br><span class="ts">جدول مشکلات متداول با علت و راه‌حل + خواندن گزارش خطای پنل</span></span><span class="pg" id="toc-ch8">۲۱</span></div>
 
   <p class="note">
     در خود پنل نیز هر صفحه دکمه «راهنما» دارد که توضیح همان بخش را همین‌جا و بدون خروج از پنل نمایش می‌دهد؛
@@ -656,6 +662,330 @@ $cfg = [ordered]@{ Name='...'; DisplayName='...'; Domain='...'; BackendPort=8083
     <div class="card"><h4><span class="dot"></span>conf.d\&lt;name&gt;.conf — کانفیگ Nginx دامنه</h4><p>ریدایرکت دائمی ۸۰ به ۴۴۳؛ listener با ssl/http2 و TLS1.2/1.3؛ هدرهای امنیتی (HSTS، nosniff، SAMEORIGIN)؛ <span class="inline-code">client_max_body_size</span> برابر UploadLimitMb ویزارد؛ gzip؛ سرو SPA با try_files؛ کش ۳۰ روزهٔ فایل‌های استاتیک؛ پروکسی <span class="inline-code">/api/</span> به <span class="inline-code">127.0.0.1:&lt;port&gt;</span> با پشتیبانی وب‌سوکت (Upgrade) و تایم‌اوت‌های ProxyTimeoutSec؛ مسدودسازی یا انتشار /docs و /openapi.json بسته به BlockDocs؛ و <span class="inline-code">/healthz</span> با پاسخ 200 برای مانیتورینگ.</p></div>
     <div class="card"><h4><span class="dot"></span>service\&lt;name&gt;-service.xml — تعریف سرویس WinSW</h4><p>شناسهٔ <span class="inline-code">deployguard-&lt;name&gt;</span>؛ اجرای <span class="inline-code">backend\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port &lt;port&gt;</span> با workingdirectory پوشهٔ بک‌اند؛ استارت Automatic؛ ری‌استارت خودکار پس از خطا با تأخیر ۵ و ۱۰ ثانیه و resetfailure یک‌ساعته؛ لاگ roll-by-size ده‌مگابایتی تا ۸ فایل در پوشهٔ logs؛ تایم‌اوت توقف ۱۵ ثانیه. در سوییچ به‌روزرسانی یا بازگشت، فقط مقدار workingdirectory همین فایل تغییر می‌کند — بقیهٔ تعریف ثابت می‌ماند.</p></div>
   </div>
+
+
+  <!-- ═══════ پیوست فصل ۵ — متن کامل 05-Nginx.ps1 ═══════ -->
+  <h3 id="appendix-05-nginx" style="color:var(--c-accent);font-size:19px;margin:26px 0 10px 0;">پیوست فصل — متن کامل یک اسکریپت واقعی: <span class="mono" style="direction:ltr;unicode-bidi:embed;">05-Nginx.ps1</span></h3>
+
+  <p class="body-text">
+    در ادامه <b>متن کامل و بدون هیچ حذفی</b> یکی از شش اسکریپت استقرار را می‌بینید — همان
+    <span class="inline-code">05-Nginx.ps1</span> که در ستون اجرا با نام مرحلهٔ «پیکربندی Nginx و SSL» اجرا می‌شود.
+    این دقیقاً خروجی پنل برای سامانهٔ نمونهٔ <span class="inline-code">university-scheduler</span> روی دامنهٔ
+    <span class="inline-code">barnamehyar360.ir</span> است: تمام مقادیر داخل بلوک
+    <span class="inline-code">$cfg</span> همان چیزی است که در گام ۱ ویزارد وارد شده و تغییر هر مقدار در ویزارد، یعنی
+    بازتولید همین متن با مقادیر جدید. پنج اسکریپت دیگر هم دقیقاً همین ساختار را دارند؛ فقط بلوک منطقی میانی هر کدام
+    (بررسی‌ها، کپی کد، venv و سرویس، build فرانت‌اند، اعتبارسنجی) فرق می‌کند.
+  </p>
+
+  <p class="body-text">
+    <b>راهنمای خواندن:</b> هر بخش از اسکریپت با خط نظر <span class="inline-code"># ----</span> شروع می‌شود و ترتیب
+    بخش‌ها همان ترتیب جدول‌های همین فصل است. برچسب‌های خروجی هم رنگ معنا دارند: سبز <span class="inline-code">[OK]</span>،
+    زرد <span class="inline-code">[WARN]</span>، قرمز <span class="inline-code">[FAIL]</span> و جمع‌بندی
+    <span class="inline-code">[RESULT]</span>. متن اسکریپت‌ها عمداً انگلیسی است تا کپی‌کردن خطای دقیق برای جستجو و
+    پیوست‌کردن به گزارش ساده‌تر باشد؛ توضیح فارسی هر مرحله را در همین فصل و در تب «خروجی استقرار» پنل می‌خوانید.
+  </p>
+
+  <div class="codeblock flow sm">
+    <div class="cb-head">05-Nginx.ps1 · part 1/4 — common skeleton: params, trap [FAIL]/[HINT], $cfg block, admin check, transcript</div>
+    <pre>param([switch]$Silent)
+$ErrorActionPreference = 'Stop'
+$script:LogPath = $null
+<span class="c"># clean fatal-error reporting: one red [FAIL] line instead of a raw PowerShell stack</span>
+trap {
+  Write-Host ("<span class="f">[FAIL]</span> {0}" -f $_.Exception.Message) -ForegroundColor Red
+  Write-Host "<span class="h">[HINT]</span> the full transcript log with every detail is available in the panel (step output) and in the log file shown above" -ForegroundColor Yellow
+  if ($script:LogPath) { Write-Host ("<span class="h">[HINT]</span> log file: {0}" -f $script:LogPath) -ForegroundColor Yellow }
+  Write-Host "<span class="h">[HINT]</span> fix the cause, then press the Retry button in the panel - successful steps are not repeated" -ForegroundColor Yellow
+  try { Stop-Transcript | Out-Null } catch {}
+  exit 1
+}
+<span class="c"># keep console output UTF-8 so the panel reads every line correctly</span>
+try { [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false) } catch {}
+$cfg = [ordered]@{
+  Name            = 'university-scheduler'
+  DisplayName     = 'university-scheduler'
+  Domain          = 'barnamehyar360.ir'
+  BackendPort     = 8083
+  SourceType      = 'zip'
+  SourcePath      = 'C:\university-scheduler\university-scheduler.zip'
+  DeployPath      = 'C:\university-scheduler\university-scheduler'
+  SslCertPath     = 'C:\SSL\barnamehyar360\certificate.pem'
+  SslKeyPath      = 'C:\SSL\barnamehyar360\private-key.pem'
+  NginxPath       = 'C:\nginx'
+  UploadLimitMb   = 100
+  ProxyTimeoutSec = 120
+  BlockDocs       = $false
+}
+
+Write-Host ""
+Write-Host "==============================================================" -ForegroundColor Cyan
+Write-Host "  DeployGuard :: Nginx :: Site Configuration &amp; Reload" -ForegroundColor Cyan
+Write-Host "  Target: $($cfg.DisplayName)  ($($cfg.Domain))" -ForegroundColor Gray
+Write-Host "  Time  : $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Gray
+Write-Host "==============================================================" -ForegroundColor Cyan
+
+
+<span class="c"># ---- Administrator privilege check --------------------------------------</span>
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+  Write-Host "<span class="f">[FAIL]</span> This script must be run as Administrator." -ForegroundColor Red
+  Write-Host "        Re-run the panel from an elevated PowerShell, or right-click -&gt; Run as administrator."
+  exit 1
+}
+Write-Host "<span class="ok">[OK]</span> Administrator privileges confirmed"
+
+$logDir = 'C:\ProgramData\DeployGuard\logs'
+if (-not (Test-Path $logDir)) { try { New-Item -ItemType Directory -Path $logDir -Force | Out-Null } catch {} }
+$script:LogPath = 'C:\ProgramData\DeployGuard\logs\university-scheduler-nginx.log'
+try { Start-Transcript -Path 'C:\ProgramData\DeployGuard\logs\university-scheduler-nginx.log' -Append | Out-Null } catch { Write-Host "<span class="w">[WARN]</span> transcript unavailable: $($_.Exception.Message)" -ForegroundColor Yellow }
+
+
+function Invoke-Nginx([string[]]$nginxArgs) {
+  $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  $out = ((&amp; $nginxExe @nginxArgs 2&gt;&amp;1) | Out-String).Trim()
+  $code = $LASTEXITCODE
+  $ErrorActionPreference = $prevEap
+  return [pscustomobject]@{ Output = $out; Exit = $code }
+}</pre>
+  </div>
+  <div class="codeblock flow sm">
+    <div class="cb-head">05-Nginx.ps1 · part 2/4 — global nginx config lock + nginx.conf patch (include conf.d + websocket map)</div>
+    <pre>$nginxExe  = Join-Path $cfg.NginxPath 'nginx.exe'
+if (-not (Test-Path $nginxExe)) { throw "nginx.exe not found at $nginxExe - install Nginx or fix the path in wizard step 1" }
+
+$confDir   = Join-Path $cfg.NginxPath 'conf\conf.d'
+$backupDir = Join-Path $cfg.DeployPath 'nginx-backups'
+if (-not (Test-Path $confDir))   { New-Item -ItemType Directory -Path $confDir   -Force | Out-Null }
+if (-not (Test-Path $backupDir)) { New-Item -ItemType Directory -Path $backupDir -Force | Out-Null }
+
+<span class="c"># ---- cross-deployment lock: two deployments must never rewrite shared nginx state at once ----</span>
+$lockFile = 'C:\ProgramData\DeployGuard\nginx.lock'
+New-Item -ItemType Directory -Path (Split-Path $lockFile) -Force | Out-Null
+<span class="c"># a lock left over from a crashed run expires after 10 minutes</span>
+if ((Test-Path $lockFile) -and ((Get-Item $lockFile -ErrorAction SilentlyContinue).LastWriteTime -lt (Get-Date).AddMinutes(-10))) {
+  Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
+  Write-Host "<span class="w">[WARN]</span> stale nginx lock (older than 10 min) removed" -ForegroundColor Yellow
+}
+$lockDeadline = (Get-Date).AddSeconds(60)
+while ((Test-Path $lockFile) -and (Get-Date) -lt $lockDeadline) {
+  Write-Host "<span class="w">[..]</span>   another deployment is changing the shared Nginx config - waiting for the lock" -ForegroundColor Yellow
+  Start-Sleep 3
+}
+if (Test-Path $lockFile) { throw "the shared Nginx config is locked by another deployment (lock file $lockFile) - wait a minute and retry" }
+New-Item -ItemType File -Path $lockFile -Force | Out-Null
+Write-Host "<span class="ok">[OK]</span>   nginx config lock acquired"
+
+<span class="c"># ensure 'include conf.d/*.conf;' + websocket map inside http{} of nginx.conf ------</span>
+$mainConf  = Join-Path $cfg.NginxPath 'conf\nginx.conf'
+if (-not (Test-Path $mainConf)) { throw "nginx.conf not found at $mainConf - check the Nginx path in wizard step 1" }
+$content   = Get-Content $mainConf -Raw
+$includeLine   = 'include conf.d/*.conf;'
+$mapLine       = 'map $http_upgrade $connection_upgrade'
+$needPatch     = $false
+$patchLines    = @()
+if ($content -notmatch [regex]::Escape($includeLine)) { $needPatch = $true; $patchLines += '    ' + $includeLine }
+if ($content -notmatch [regex]::Escape($mapLine)) {
+  $needPatch = $true
+  $patchLines += '    map $http_upgrade $connection_upgrade {', "        default upgrade;", "        ''      close;", '    }'
+}
+if ($needPatch) {
+  Copy-Item $mainConf "$mainConf.bak_deployguard" -Force
+  $insert = ($patchLines -join [Environment]::NewLine)
+  $patched = $content -replace '(?m)^(\s*http\s*\{)', ('$1' + [Environment]::NewLine + $insert)
+  Set-Content -Path $mainConf -Value $patched -Encoding ASCII
+  Write-Host "<span class="ok">[OK]</span>   conf.d include + websocket map added to nginx.conf (backup saved)"
+} else {
+  Write-Host "<span class="ok">[OK]</span>   nginx.conf already includes conf.d and the websocket map"
+}</pre>
+  </div>
+  <div class="codeblock flow sm">
+    <div class="cb-head">05-Nginx.ps1 · part 3/4 — deep SSL certificate validation (expiry, domain, key modulus, chain)</div>
+    <pre><span class="c"># ---- SSL certificate validation (expiry, domain, key match, chain) ---------------</span>
+if (-not (Test-Path $cfg.SslCertPath)) { throw "SSL certificate not found: $($cfg.SslCertPath) - copy the .pem certificate or fix the path in wizard step 1" }
+if (-not (Test-Path $cfg.SslKeyPath))  { throw "SSL private key not found: $($cfg.SslKeyPath) - copy the .key file or fix the path in wizard step 1" }
+try {
+  $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $cfg.SslCertPath
+} catch { throw "SSL certificate could not be read: $($_.Exception.Message) - the file may be corrupt or in an unsupported format" }
+$daysLeft = ($cert.NotAfter - (Get-Date)).Days
+if ($daysLeft -lt 0) { throw ("SSL certificate EXPIRED on {0} - renew the certificate, update wizard step 1, then retry" -f $cert.NotAfter.ToString('yyyy-MM-dd')) }
+if ($daysLeft -le 14) {
+  Write-Host ("<span class="w">[WARN]</span> SSL certificate expires in {0} days ({1}) - renew it soon to avoid an outage" -f $daysLeft, $cert.NotAfter.ToString('yyyy-MM-dd')) -ForegroundColor Yellow
+} else {
+  Write-Host ("<span class="ok">[OK]</span>   SSL certificate valid until {0} ({1} days left)" -f $cert.NotAfter.ToString('yyyy-MM-dd'), $daysLeft)
+}
+$cn = ''
+if ($cert.Subject -match 'CN\s*=\s*([^,]+)') { $cn = $Matches[1].Trim() }
+$sanExt = ($cert.Extensions | Where-Object { $_.Oid.FriendlyName -eq 'Subject Alternative Name' } | Select-Object -First 1)
+$san = if ($sanExt) { ($sanExt.Format($false) -replace '^[^=]+=', '') } else { '' }
+if ($cn -ne $cfg.Domain -and ($san -notmatch [regex]::Escape($cfg.Domain))) {
+  Write-Host ("<span class="w">[WARN]</span> certificate subject '{0}' may not cover domain '{1}' (SAN: {2}) - browsers may warn" -f $cn, $cfg.Domain, ($(if ($san) { $san } else { 'none' }))) -ForegroundColor Yellow
+} else {
+  Write-Host "<span class="ok">[OK]</span>   certificate matches the domain"
+}
+$rawPem = Get-Content $cfg.SslCertPath -Raw
+$certCount = ([regex]::Matches($rawPem, '-----BEGIN CERTIFICATE-----')).Count
+if ($certCount -le 1) { Write-Host "<span class="w">[WARN]</span> certificate file contains a single certificate - the intermediate chain may be missing (browsers ok, some clients fail)" -ForegroundColor Yellow }
+$openssl = Get-Command openssl.exe -ErrorAction SilentlyContinue
+if ($openssl) {
+  $prevEap = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  $cMod = ((&amp; openssl x509 -noout -modulus -in $cfg.SslCertPath 2&gt;$null) | Out-String).Trim()
+  $kMod = ((&amp; openssl rsa  -noout -modulus -in $cfg.SslKeyPath  2&gt;$null) | Out-String).Trim()
+  $ErrorActionPreference = $prevEap
+  if ($cMod -and $kMod) {
+    if ($cMod -ne $kMod) { throw "the private key does not match the certificate - you probably mixed up files of another domain; check wizard step 1" }
+    Write-Host "<span class="ok">[OK]</span>   private key matches the certificate (openssl modulus)"
+  } else { Write-Host "<span class="w">[WARN]</span> key/cert pair check skipped (openssl could not read the files)" -ForegroundColor Yellow }
+}</pre>
+  </div>
+  <div class="codeblock flow sm">
+    <div class="cb-head">05-Nginx.ps1 · part 4/4 — write per-domain site conf, firewall rules, nginx -t & reload</div>
+    <pre><span class="c"># ---- write the site configuration (per-domain file) ------------------------------</span>
+$confContent = @'
+<span class="c"># =============================================================</span>
+<span class="c"># MahDeploy :: university-scheduler</span>
+<span class="c"># domain  : barnamehyar360.ir</span>
+<span class="c"># backend : http://127.0.0.1:8083  (FastAPI / uvicorn)</span>
+<span class="c"># frontend: static build served below</span>
+<span class="c"># managed by MahDeploy - do not edit manually</span>
+<span class="c"># =============================================================</span>
+server {
+    listen 80;
+    server_name barnamehyar360.ir;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name barnamehyar360.ir;
+
+    ssl_certificate      C:\SSL\barnamehyar360\certificate.pem;
+    ssl_certificate_key  C:\SSL\barnamehyar360\private-key.pem;
+    ssl_protocols        TLSv1.2 TLSv1.3;
+    ssl_ciphers          ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache    shared:university-scheduler_ssl:10m;
+    ssl_session_timeout  10m;
+
+<span class="c">    # ---------- security headers ----------</span>
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options    "nosniff" always;
+    add_header X-Frame-Options           "SAMEORIGIN" always;
+    add_header Referrer-Policy           "strict-origin-when-cross-origin" always;
+
+    client_max_body_size 100m;
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript image/svg+xml;
+
+<span class="c">    # ---------- frontend (React static build, SPA fallback) ----------</span>
+    root  C:\university-scheduler\university-scheduler\www;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+<span class="c">    # ---------- backend (FastAPI) ----------</span>
+    location /api/ {
+        proxy_pass http://127.0.0.1:8083;
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+<span class="c">        # websocket / long-polling friendly</span>
+        proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Connection        $connection_upgrade;
+        proxy_read_timeout  120s;
+        proxy_send_timeout  120s;
+        proxy_connect_timeout 30s;
+        proxy_buffering off;
+    }
+
+<span class="c">    # ---------- API docs (public) ----------</span>
+    location /docs {
+        proxy_pass http://127.0.0.1:8083;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /openapi.json {
+        proxy_pass http://127.0.0.1:8083;
+        proxy_set_header Host $host;
+    }
+
+<span class="c">    # ---------- health endpoint for the panel ----------</span>
+    location = /healthz {
+        access_log off;
+        return 200 "healthy";
+    }
+}
+
+'@
+$confPath = Join-Path $confDir ('{0}.conf' -f $cfg.Name)
+$prevConf = $null
+if (Test-Path $confPath) {
+  $ts = Get-Date -Format 'yyyyMMdd-HHmmss'
+  $prevConf = Join-Path $backupDir ("{0}.conf.{1}" -f $cfg.Name, $ts)
+  Copy-Item $confPath $prevConf -Force
+  Write-Host "<span class="ok">[OK]</span>   previous config backed up: $prevConf"
+}
+Set-Content -Path $confPath -Value $confContent -Encoding ASCII
+Write-Host "<span class="ok">[OK]</span>   site config written: $confPath"
+
+<span class="c"># firewall -------------------------------------------------------------------------</span>
+foreach ($port in 80,443) {
+  $rule = Get-NetFirewallRule -DisplayName "DeployGuard HTTP $port" -ErrorAction SilentlyContinue
+  if (-not $rule) {
+    New-NetFirewallRule -DisplayName "DeployGuard HTTP $port" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow | Out-Null
+    Write-Host "<span class="ok">[OK]</span>   firewall rule added for TCP $port"
+  }
+}
+
+<span class="c"># test &amp; reload --------------------------------------------------------------------</span>
+$test = Invoke-Nginx @('-t')
+Write-Host $test.Output
+if ($test.Exit -ne 0) {
+  if ($prevConf) {
+    Copy-Item $prevConf $confPath -Force
+    Write-Host "<span class="w">[WARN]</span> new config was rejected - the previous config was restored automatically" -ForegroundColor Yellow
+    Invoke-Nginx @('-t') | Out-Null
+  }
+  $emergLines = @($test.Output -split "\r?\n" | Where-Object { $_ -match 'emerg|crit|\[error\]' } | Select-Object -First 3)
+  $detail = if ($emergLines) { $emergLines -join ' | ' } else { $test.Output }
+  throw "nginx configuration test failed (exit $($test.Exit)): $detail - fix the reported line and retry (a backup of the previous config is in $backupDir)"
+}
+Write-Host "<span class="ok">[OK]</span>   nginx configuration test passed"
+
+$running = Get-Process nginx -ErrorAction SilentlyContinue
+if ($running) {
+  $reload = Invoke-Nginx @('-s','reload')
+  if ($reload.Exit -ne 0) { throw "nginx reload failed (exit $($reload.Exit)): $($reload.Output)" }
+  Write-Host "<span class="ok">[OK]</span>   nginx reloaded"
+} else {
+  Start-Process -FilePath $nginxExe -WorkingDirectory $cfg.NginxPath -WindowStyle Hidden
+  Start-Sleep 2
+  Write-Host "<span class="ok">[OK]</span>   nginx started"
+}
+
+Remove-Item $lockFile -Force -ErrorAction SilentlyContinue
+Write-Host "<span class="ok">[RESULT]</span> Nginx site is live at https://$($cfg.Domain)" -ForegroundColor Green
+try { Stop-Transcript | Out-Null } catch {}</pre>
+  </div>
+
+  <p class="body-text">
+    همین متن را در سه جا می‌توانید ببینید و کپی کنید: در گام «تولید پلن» پیش از اجرا (قابل مرور، کپی و دانلود)، در تب
+    «اسکریپت‌های PowerShell» پنجرهٔ جزئیات سامانه، و روی سرور در فایل
+    <span class="inline-code">scripts\05-Nginx.ps1</span> کنار بقیهٔ اسکریپت‌های پلن. پنل هر اسکریپت را با
+    <span class="inline-code">powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass</span> اجرا می‌کند و
+    خروجی خط‌به‌خط به همان مرحلهٔ پلن برمی‌گردد؛ هیچ‌کدام از این دستورها به‌صورت دستی و جدا از پنل اجرا نمی‌شوند.
+  </p>
 
   <!-- ═══════ فصل ۶ ═══════ -->
   <div class="chapter-header ch-a5" id="ch6">

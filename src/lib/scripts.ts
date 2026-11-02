@@ -609,7 +609,7 @@ if ($content -notmatch [regex]::Escape($mapLine)) {
 if ($needPatch) {
   Copy-Item $mainConf "$mainConf.bak_deployguard" -Force
   $insert = ($patchLines -join [Environment]::NewLine)
-  $patched = $content -replace '(?m)^(\s*http\s*\{)', ('$1' + [Environment]::NewLine + $insert)
+  $patched = $content -replace '(?m)^(\\s*http\\s*\\{)', ('$1' + [Environment]::NewLine + $insert)
   Set-Content -Path $mainConf -Value $patched -Encoding ASCII
   Write-Host "[OK]   conf.d include + websocket map added to nginx.conf (backup saved)"
 } else {
@@ -630,7 +630,7 @@ if ($daysLeft -le 14) {
   Write-Host ("[OK]   SSL certificate valid until {0} ({1} days left)" -f $cert.NotAfter.ToString('yyyy-MM-dd'), $daysLeft)
 }
 $cn = ''
-if ($cert.Subject -match 'CN\s*=\s*([^,]+)') { $cn = $Matches[1].Trim() }
+if ($cert.Subject -match 'CN\\s*=\\s*([^,]+)') { $cn = $Matches[1].Trim() }
 $sanExt = ($cert.Extensions | Where-Object { $_.Oid.FriendlyName -eq 'Subject Alternative Name' } | Select-Object -First 1)
 $san = if ($sanExt) { ($sanExt.Format($false) -replace '^[^=]+=', '') } else { '' }
 if ($cn -ne $cfg.Domain -and ($san -notmatch [regex]::Escape($cfg.Domain))) {
@@ -686,7 +686,7 @@ if ($test.Exit -ne 0) {
     Write-Host "[WARN] new config was rejected - the previous config was restored automatically" -ForegroundColor Yellow
     Invoke-Nginx @('-t') | Out-Null
   }
-  $emergLines = @($test.Output -split "\\r?\\n" | Where-Object { $_ -match 'emerg|crit|\[error\]' } | Select-Object -First 3)
+  $emergLines = @($test.Output -split "\\r?\\n" | Where-Object { $_ -match 'emerg|crit|\\[error\\]' } | Select-Object -First 3)
   $detail = if ($emergLines) { $emergLines -join ' | ' } else { $test.Output }
   throw "nginx configuration test failed (exit $($test.Exit)): $detail - fix the reported line and retry (a backup of the previous config is in $backupDir)"
 }
