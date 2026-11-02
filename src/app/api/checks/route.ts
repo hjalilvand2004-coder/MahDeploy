@@ -24,6 +24,28 @@ async function bindTest(port: number): Promise<boolean> {
   });
 }
 
+/** identify the process holding a listening port (Windows only, best-effort) */
+async function portOwner(port: number): Promise<{ name: string; pid: number; service: string } | null> {
+  if (process.platform !== "win32") return null;
+  try {
+    const { execFile } = await import("child_process");
+    const { promisify } = await import("util");
+    const script = [
+      `$c = Get-NetTCPConnection -State Listen -LocalPort ${port} -ErrorAction SilentlyContinue | Select-Object -First 1`,
+      "if (-not $c) { exit 0 }",
+      "$p = Get-Process -Id $c.OwningProcess -ErrorAction SilentlyContinue",
+      "$s = Get-CimInstance Win32_Service -Filter ('ProcessId=' + $c.OwningProcess) -ErrorAction SilentlyContinue",
+      '"{0}|{1}|{2}" -f $p.ProcessName, $c.OwningProcess, $s.Name',
+    ].join("; ");
+    const { stdout } = await promisify(execFile)("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], { timeout: 8000 });
+    const [name, pid, service] = stdout.trim().split("|");
+    if (!name) return null;
+    return { name, pid: Number(pid) || 0, service: service || "" };
+  } catch {
+    return null;
+  }
+}
+
 async function checkDomain(domain: string, soft = false): Promise<CheckResult> {
   if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(domain)) {
     return check("domain", "اعتبارسنجی دامنه", "fail", "قالب دامنه معتبر نیست", domain);
@@ -70,11 +92,36 @@ async function checkPort(port: number, currentName?: string): Promise<CheckResul
     ];
   }
   const free = await bindTest(port);
-  return [
-    free
-      ? check("port", "آزاد بودن پورت", "ok", `پورت ${port} آزاد است و در دسترس قرار گرفت`)
-      : check("port", "آزاد بودن پورت", "fail", `پورت ${port} هم‌اکنون در این سرور اشغال است`),
-  ];
+  if (free) {
+    return [check("port", "آزاد بودن پورت", "ok", `پورت ${port} آزاد است و در دسترس قرار گرفت`)];
+  }
+  const owner = await portOwner(port);
+  const ownService =
+    owner && currentName
+      ? owner.service === `deployguard-${currentName}` || owner.name === `${currentName}-service`
+      : false;
+  if (ownService) {
+    return [
+      check(
+        "port",
+        "آزاد بودن پورت",
+        "warn",
+        `پورت ${port} در اختیار سرویس خودِ همین سامانه (deployguard-${currentName}) است — هنگام استقرار مجدد یا به‌روزرسانی مانعی ندارد؛ برنامه آن را متوقف و جایگزین می‌کند`
+      ),
+    ];
+  }
+  if (owner) {
+    const svcPart = owner.service ? ` / سرویس «${owner.service}»` : "";
+    return [
+      check(
+        "port",
+        "آزاد بودن پورت",
+        "fail",
+        `پورت ${port} توسط پردازش «${owner.name}» (PID ${owner.pid})${svcPart} اشغال است — آن را متوقف کنید یا در گام ۲ پورت دیگری انتخاب کنید`
+      ),
+    ];
+  }
+  return [check("port", "آزاد بودن پورت", "fail", `پورت ${port} هم‌اکنون در این سرور اشغال است`)];
 }
 
 async function checkSsl(certPath: string, keyPath: string, domain?: string): Promise<CheckResult[]> {

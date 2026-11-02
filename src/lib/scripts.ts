@@ -224,8 +224,7 @@ function Invoke-Nginx([string[]]$nginxArgs) {
 
 function script01(cfg: DeployConfig): string {
   return `${COMMON_PARAMS(cfg)}${BANNER("Preflight Checks")}
-${ADMIN_CHECK}${transcriptBlock("C:\\ProgramData\\DeployGuard\\logs\\<name>-preflight.log")
-    .replace("<name>", cfg.name)}
+${ADMIN_CHECK}${transcriptBlock(`C:\\ProgramData\\DeployGuard\\logs\\${cfg.name}-preflight.log`)}
 $failures = 0
 function Check($name, $ok, $detail) {
   if ($ok) { Write-Host ("[OK]   {0}  {1}" -f $name, $detail) -ForegroundColor Green }
@@ -233,14 +232,34 @@ function Check($name, $ok, $detail) {
 }
 function Warn($name, $detail) { Write-Host ("[WARN] {0}  {1}" -f $name, $detail) -ForegroundColor Yellow }
 
-# 1) Port must be free ----------------------------------------------------
-$conn = Get-NetTCPConnection -State Listen -LocalPort $cfg.BackendPort -ErrorAction SilentlyContinue
-$owner = $null
+# 1) Port must be free (or held by our own service during redeploy/update) --
+$serviceName = "deployguard-$($cfg.Name)"
+$conn = Get-NetTCPConnection -State Listen -LocalPort $cfg.BackendPort -ErrorAction SilentlyContinue | Select-Object -First 1
+$ownPid = 0; $owner = $null; $ownerPath = ''; $svcName = ''; $ownSvc = $false
 if ($conn) {
-  $p = Get-Process -Id ($conn | Select-Object -First 1).OwningProcess -ErrorAction SilentlyContinue
-  $owner = if ($p) { $p.ProcessName } else { "unknown" }
+  $ownPid = $conn.OwningProcess
+  $p = Get-Process -Id $ownPid -ErrorAction SilentlyContinue
+  $owner = if ($p) { $p.ProcessName } else { 'unknown' }
+  if ($p) { try { $ownerPath = [string]$p.Path } catch {} }
+  $svc = Get-CimInstance Win32_Service -Filter "ProcessId=$ownPid" -ErrorAction SilentlyContinue
+  if ($svc) { $svcName = [string]$svc.Name }
+  if ($owner -eq '$(cfg.name)-service' -or $svcName -eq $serviceName) { $ownSvc = $true }
+  if (-not $ownSvc -and $ownerPath -and $ownerPath.ToLower().StartsWith($cfg.DeployPath.ToLower())) { $ownSvc = $true }
 }
-Check ("Port {0} is free" -f $cfg.BackendPort) (-not $conn) $(if ($owner) { "occupied by $owner" } else { "" })
+if (-not $conn) {
+  Check ("Port {0} is free" -f $cfg.BackendPort) $true ""
+} elseif ($ownSvc) {
+  Write-Host ("[WARN] Port {0} in use by our own service '{1}' (PID {2}) - normal when redeploying or updating; the plan stops and replaces it" -f $cfg.BackendPort, $serviceName, $ownPid) -ForegroundColor Yellow
+} else {
+  Check ("Port {0} is free" -f $cfg.BackendPort) $false ("occupied by '{0}' (PID {1}){2}" -f $owner, $ownPid, $(if ($ownerPath) { " - path: $ownerPath" } else { "" }))
+  if ($svcName) {
+    Write-Host ("[HINT] it runs as Windows service '{0}' - stop it with:  Stop-Service '{0}' -Force   then press Retry in the panel" -f $svcName) -ForegroundColor Yellow
+  } else {
+    Write-Host ("[HINT] quick stop:  Stop-Process -Id {0} -Force   (or close that program normally)" -f $ownPid) -ForegroundColor Yellow
+    Write-Host "[HINT] then press Retry in the panel - successful steps are not repeated" -ForegroundColor Yellow
+    Write-Host "[HINT] or pick a different backend port in wizard step 2 and rebuild the plan" -ForegroundColor Yellow
+  }
+}
 
 # 2) SSL certificate files ------------------------------------------------
 Check "SSL certificate file exists" (Test-Path $cfg.SslCertPath) $(if (Test-Path $cfg.SslCertPath) { $cfg.SslCertPath } else { "$($cfg.SslCertPath)  <- copy the .pem certificate here or fix the path in wizard step 1" })
@@ -936,8 +955,8 @@ else { Lvl 'https' 'warn' "HTTPS probe failed - DNS may not point to this server
 $driveRoot = [System.IO.Path]::GetPathRoot($cfg.DeployPath).TrimEnd(':\\')
 try {
   $d = Get-PSDrive -Name $driveRoot -ErrorAction Stop
-  $freeGb = [math]::Round($d.Free / 1GB, 2)
-  $totalGb = [math]::Round(($d.Used + $d.Free) / 1GB, 2)
+  $freeGb = [Math]::Round($d.Free / 1GB, 2)
+  $totalGb = [Math]::Round(($d.Used + $d.Free) / 1GB, 2)
   if ($freeGb -lt 1) { Lvl 'disk' 'fail' "only $freeGb GB free on $driveRoot (of $totalGb GB) - free space NOW, the service may crash" }
   elseif ($freeGb -lt 2 -or ($d.Free / ($d.Used + $d.Free)) -lt 0.10) { Lvl 'disk' 'warn' "$freeGb GB free on $driveRoot (of $totalGb GB) - plan a cleanup" }
   else { Lvl 'disk' 'ok' "$freeGb GB free on $driveRoot (of $totalGb GB)" }
@@ -955,7 +974,7 @@ $logsDir = Join-Path $cfg.DeployPath 'logs'
 if (Test-Path $logsDir) {
   $sum = (Get-ChildItem $logsDir -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
   if ($null -eq $sum) { $sum = 0 }
-  $logMb = [math]::Round($sum / 1MB, 1)
+  $logMb = [Math]::Round($sum / 1MB, 1)
   if ($logMb -gt 1024) { Lvl 'logs' 'fail' "logs take $logMb MB - run log rotation from the panel now" }
   elseif ($logMb -gt 100) { Lvl 'logs' 'warn' "logs take $logMb MB - consider log rotation from the panel" }
   else { Lvl 'logs' 'ok' "logs take $logMb MB" }
@@ -1006,9 +1025,9 @@ foreach ($dir in $targets) {
   $after = 0
   $afterSum = (Get-ChildItem $dir -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
   if ($null -ne $afterSum) { $after = $afterSum }
-  $freed += [math]::Max(0, $before - $after)
+  $freed += [Math]::Max(0, $before - $after)
 }
-Write-Host ("[RESULT] log rotation finished - freed {0} MB" -f [math]::Round($freed / 1MB, 1)) -ForegroundColor Green
+Write-Host ("[RESULT] log rotation finished - freed {0} MB" -f [Math]::Round($freed / 1MB, 1)) -ForegroundColor Green
 ${STOP_TRANSCRIPT}
 `;
 }
@@ -1125,11 +1144,23 @@ Check "Existing deployment folder" (Test-Path $cfg.DeployPath) $cfg.DeployPath
 $serviceName = "deployguard-$($cfg.Name)"
 $svc = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 if (-not $svc) { Warn "current service" "$serviceName not installed - the update will install it" }
+# a FOREIGN process holding the backend port would break the final switch
+$conn = Get-NetTCPConnection -State Listen -LocalPort $cfg.BackendPort -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($conn) {
+  $p = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
+  $ownerName = if ($p) { $p.ProcessName } else { 'unknown' }
+  $portSvc = ''
+  try { $s = Get-CimInstance Win32_Service -Filter "ProcessId=$($conn.OwningProcess)" -ErrorAction SilentlyContinue; if ($s) { $portSvc = [string]$s.Name } } catch {}
+  if ($portSvc -ne $serviceName) {
+    Warn "backend port before switch" ("port {0} is held by '{1}' (PID {2}){3} - the final switch needs this port free; stop it before switching" -f $cfg.BackendPort, $ownerName, $conn.OwningProcess, $(if ($portSvc) { " / service '$portSvc'" } else { "" }))
+    if ($portSvc) { Write-Host ("[HINT] stop it with:  Stop-Service '{0}' -Force" -f $portSvc) -ForegroundColor Yellow }
+  }
+}
 if ($cfg.SourceType -eq 'zip') { Check "Source ZIP exists" (Test-Path $cfg.SourcePath) $cfg.SourcePath }
 else { Check "Source path exists" (Test-Path $cfg.SourcePath) $cfg.SourcePath }
 try {
   $d = Get-PSDrive -Name ([System.IO.Path]::GetPathRoot($cfg.DeployPath).TrimEnd(':\\')) -ErrorAction Stop
-  $freeGb = [math]::Round($d.Free / 1GB, 2)
+  $freeGb = [Math]::Round($d.Free / 1GB, 2)
   Check "at least 1 GB free on the deploy drive" ($freeGb -ge 1) ("$freeGb GB free - a release copy + build needs space")
 } catch { Warn "disk space" "could not read drive usage" }
 
